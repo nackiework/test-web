@@ -183,6 +183,12 @@ const RATE_CARDS = [
 ];
 
 function App() {
+  const getAssetUrl = (path) => {
+    if (!path) return '';
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    return import.meta.env.BASE_URL + cleanPath;
+  };
+
   const [activeTab, setActiveTab] = useState(1);
   
   // --- MOCK AUTHENTICATION SYSTEM STATE ---
@@ -584,7 +590,7 @@ function App() {
                 <div className="w-44 h-44 md:w-52 md:h-52 rounded-xl bg-gradient-to-tr from-yellow-300 via-pink-400 to-purple-500 p-1 flex-shrink-0 flex items-center justify-center border border-white/20 shadow-md relative floating-element">
                   <div className="w-full h-full rounded-lg bg-slate-950 flex flex-col items-center justify-center border border-purple-900/50 relative overflow-hidden">
                     <img 
-                      src={PORTFOLIO_IMAGES_PAGE1[4]} 
+                      src={getAssetUrl(PORTFOLIO_IMAGES_PAGE1[4])} 
                       alt="By Wish Avatar" 
                       className="w-full h-full object-cover"
                       onClick={() => setLightboxImage(PORTFOLIO_IMAGES_PAGE1[4])}
@@ -637,7 +643,7 @@ function App() {
                     >
                       <div className="aspect-[4/5] rounded-lg bg-slate-900 overflow-hidden relative">
                         <img 
-                          src={imgUrl} 
+                          src={getAssetUrl(imgUrl)} 
                           alt={`Magic Artwork ${idx+1}`} 
                           className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" 
                         />
@@ -843,7 +849,7 @@ function App() {
                               className="w-full h-36 rounded-xl bg-slate-950 overflow-hidden flex items-center justify-center shadow-inner mb-1 border border-purple-900/30 relative cursor-zoom-in"
                             >
                               <img 
-                                src={item.image} 
+                                src={getAssetUrl(item.image)} 
                                 alt={item.name} 
                                 className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" 
                               />
@@ -911,7 +917,7 @@ function App() {
                           className="glass-panel p-0.5 rounded-xl cursor-pointer overflow-hidden border border-purple-500/20 hover:border-purple-400 group transition-all"
                         >
                           <div className="aspect-square bg-slate-950 rounded-lg overflow-hidden relative">
-                            <img src={imgUrl} alt={`Toon ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
+                            <img src={getAssetUrl(imgUrl)} alt={`Toon ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
                           </div>
                         </div>
                       ))}
@@ -932,7 +938,7 @@ function App() {
                           className="glass-panel p-0.5 rounded-xl cursor-pointer overflow-hidden border border-pink-500/20 hover:border-pink-400 group transition-all"
                         >
                           <div className="aspect-square bg-slate-950 rounded-lg overflow-hidden relative">
-                            <img src={imgUrl} alt={`Decor ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
+                            <img src={getAssetUrl(imgUrl)} alt={`Decor ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
                           </div>
                         </div>
                       ))}
@@ -953,7 +959,7 @@ function App() {
                           className="glass-panel p-0.5 rounded-xl cursor-pointer overflow-hidden border border-purple-500/20 hover:border-purple-400 group transition-all"
                         >
                           <div className="aspect-square bg-slate-950 rounded-lg overflow-hidden relative">
-                            <img src={imgUrl} alt={`Block ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
+                            <img src={getAssetUrl(imgUrl)} alt={`Block ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
                           </div>
                         </div>
                       ))}
@@ -974,7 +980,7 @@ function App() {
                           className="glass-panel p-0.5 rounded-xl cursor-pointer overflow-hidden border border-blue-500/20 hover:border-blue-400 group transition-all"
                         >
                           <div className="aspect-square bg-slate-950 rounded-lg overflow-hidden relative">
-                            <img src={imgUrl} alt={`Tutorial ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
+                            <img src={getAssetUrl(imgUrl)} alt={`Tutorial ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
                           </div>
                         </div>
                       ))}
@@ -997,7 +1003,7 @@ function App() {
                         className="glass-panel p-1 rounded-2xl cursor-pointer overflow-hidden shadow group hover:border-purple-400/80 transition-all border-purple-500/20"
                       >
                         <div className="aspect-[3/4] rounded-xl bg-slate-950 overflow-hidden relative">
-                          <img src={imgUrl} alt={`Rate Card ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" />
+                          <img src={getAssetUrl(imgUrl)} alt={`Rate Card ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" />
                           <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
                             <span className="text-[11px] font-semibold text-white bg-slate-950/80 px-2.5 py-1 rounded-lg border border-purple-500/30">ดูเรทราคาชัดๆ</span>
                           </div>
@@ -1484,7 +1490,7 @@ function App() {
                       >
                         <div className="aspect-[4/3] rounded-lg bg-slate-900 overflow-hidden relative">
                           <img 
-                            src="/page2/กรอบคอนแทค/615530562799010103.jpg" 
+                            src={getAssetUrl("/page2/กรอบคอนแทค/615530562799010103.jpg")} 
                             alt="Contact Banner 1" 
                             className="w-full h-full object-cover group-hover:scale-102 transition-all duration-300"
                           />
@@ -1497,7 +1503,7 @@ function App() {
                       >
                         <div className="aspect-[4/3] rounded-lg bg-slate-900 overflow-hidden relative">
                           <img 
-                            src="/page2/กรอบคอนแทค/615530671381151868.jpg" 
+                            src={getAssetUrl("/page2/กรอบคอนแทค/615530671381151868.jpg")} 
                             alt="Contact Banner 2" 
                             className="w-full h-full object-cover group-hover:scale-102 transition-all duration-300"
                           />
@@ -1911,7 +1917,7 @@ function App() {
             </button>
             <div className="w-full h-full flex items-center justify-center bg-slate-950 p-2 rounded-2xl border border-purple-500/20 shadow-2xl relative overflow-hidden">
               <img 
-                src={lightboxImage} 
+                src={getAssetUrl(lightboxImage)} 
                 alt="Enlarged Magical View" 
                 className="max-h-[80vh] max-w-full object-contain rounded-xl"
               />
