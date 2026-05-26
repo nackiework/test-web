@@ -1,0 +1,245 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Kanit', 'Inter', system-ui, sans-serif;
+  --font-mitr: 'Mitr', sans-serif;
+  --font-itim: 'Itim', cursive;
+  --font-charm: 'Charm', cursive;
+  --font-sriracha: 'Sriracha', cursive;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #faf9fc;
+  min-height: 100vh;
+  color: #2d2438;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Starry Sky Sparkle overlay using pure CSS in a bright pastel theme */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(167, 139, 250, 0.12) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 80% 40%, rgba(244, 114, 182, 0.18) 2px, transparent 2px),
+    radial-gradient(circle at 30% 70%, rgba(167, 139, 250, 0.1) 1.2px, transparent 1.2px),
+    radial-gradient(circle at 70% 80%, rgba(244, 114, 182, 0.15) 1.8px, transparent 1.8px);
+  background-size: 250px 250px;
+  animation: starsMoving 180s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes starsMoving {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 1000px 500px;
+  }
+}
+
+/* Magical Bright Glassmorphism Panel with Violet-Glow Border */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  box-shadow: 
+    0 8px 32px 0 rgba(167, 139, 250, 0.05),
+    0 0 15px rgba(244, 114, 182, 0.02);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 
+    0 15px 40px 0 rgba(167, 139, 250, 0.1),
+    0 0 25px rgba(244, 114, 182, 0.06);
+  border-color: rgba(167, 139, 250, 0.55);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  color: #2d2438;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.glass-input:focus {
+  background: #ffffff;
+  border-color: #a78bfa;
+  box-shadow: 0 0 12px rgba(167, 139, 250, 0.2);
+}
+
+/* Custom Scrollbars in Bright Magic Theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #d8b4fe, #f472b6);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #f472b6, #a78bfa);
+}
+
+/* Shiny gradient text */
+.shiny-text {
+  background: linear-gradient(135deg, #b45309, #db2777, #7c3aed, #0284c7);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 5s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Floating animation */
+.floating-element {
+  animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+/* Glow highlights for magic items */
+.magic-glow-purple {
+  box-shadow: 0 0 20px rgba(167, 139, 250, 0.12);
+}
+
+.magic-glow-pink {
+  box-shadow: 0 0 20px rgba(244, 114, 182, 0.12);
+}
+
+.magic-glow-gold {
+  box-shadow: 0 0 20px rgba(217, 119, 6, 0.1);
+}
+
+/* Custom font previews */
+.font-preview-mitr {
+  font-family: 'Mitr', sans-serif;
+}
+.font-preview-itim {
+  font-family: 'Itim', cursive;
+}
+.font-preview-charm {
+  font-family: 'Charm', cursive;
+}
+.font-preview-sriracha {
+  font-family: 'Sriracha', cursive;
+}
+.font-preview-kanit {
+  font-family: 'Kanit', sans-serif;
+}
+
+/* ======================================================== */
+/* ============= BRIGHT LIGHT THEME OVERRIDES ============ */
+/* ======================================================== */
+
+/* Convert Slate and Dark elements to bright pastel purple-whites */
+.bg-slate-900,
+.bg-slate-950,
+.bg-slate-900\/60,
+.bg-slate-950\/50,
+.bg-slate-950\/60,
+.bg-slate-950\/80,
+.bg-purple-900\/80,
+.bg-purple-950\/60 {
+  background-color: rgba(246, 240, 253, 0.72) !important;
+  color: #2d2438 !important;
+  border-color: rgba(167, 139, 250, 0.22) !important;
+}
+
+/* Keep modal, slip container and lightbox backdrops dark for focus */
+div.fixed.bg-slate-950\/70 {
+  background-color: rgba(20, 15, 30, 0.45) !important;
+}
+div.fixed.bg-slate-950\/90 {
+  background-color: rgba(10, 5, 15, 0.88) !important;
+}
+.bg-slate-950 p.text-purple-300 {
+  color: #e9d5ff !important;
+}
+.bg-slate-950 span.text-purple-300 {
+  color: #e9d5ff !important;
+}
+
+/* Light theme readable text overrides */
+.text-purple-100,
+.text-purple-200,
+.text-purple-300,
+.text-purple-400,
+.text-purple-250,
+.text-purple-350 {
+  color: #5c437a !important;
+}
+
+.text-purple-300\/80 {
+  color: rgba(92, 67, 122, 0.8) !important;
+}
+
+.text-slate-350,
+.text-slate-300,
+.text-slate-400 {
+  color: #4b3962 !important;
+}
+
+/* Readable gold/amber text for titles & ratings */
+.text-yellow-300,
+.text-yellow-450,
+.text-yellow-400 {
+  color: #b45309 !important; /* Amber 700 */
+}
+
+/* Redesign Gradient Headings to be deep & luxurious rose-violet instead of neon */
+.bg-gradient-to-r.from-yellow-300.via-pink-400.to-purple-300,
+.bg-gradient-to-r.from-yellow-300.via-pink-400.to-purple-400,
+.bg-gradient-to-r.from-yellow-300.via-pink-400.to-purple-500,
+.bg-gradient-to-tr.from-yellow-300.via-pink-400.to-purple-500,
+.from-yellow-300.via-pink-400.to-purple-300,
+.from-yellow-300.via-pink-400.to-purple-400,
+.from-yellow-300.via-pink-400.to-purple-500 {
+  background-image: linear-gradient(135deg, #7c3aed, #db2777, #ec4899) !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+}
+
+/* Main title styling */
+h1.text-lg, h2.text-lg, h3.text-sm {
+  color: #2d2438 !important;
+}
