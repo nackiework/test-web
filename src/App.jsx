@@ -643,7 +643,7 @@ function App() {
                           placeholder="ค้นหาชื่อกลุ่ม..."
                           value={p2Search}
                           onChange={(e) => setP2Search(e.target.value)}
-                          className="glass-input text-xs rounded-xl pl-8 pr-3 py-2.5 w-full"
+                          className="glass-input glass-input-search text-xs rounded-xl pl-8 pr-3 py-2.5 w-full"
                         />
                         <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-pink-400" />
                       </div>
@@ -878,7 +878,7 @@ function App() {
                       placeholder="ค้นหาชื่อฟอนต์..."
                       value={p3Search}
                       onChange={(e) => setP3Search(e.target.value)}
-                      className="glass-input text-xs rounded-xl pl-8 pr-3 py-2.5 w-full"
+                      className="glass-input glass-input-search text-xs rounded-xl pl-8 pr-3 py-2.5 w-full"
                     />
                     <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-pink-400" />
                   </div>

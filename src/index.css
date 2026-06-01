@@ -381,6 +381,11 @@ textarea.glass-input:focus {
   background: #ffffff !important;
 }
 
+/* Fix search inputs with left padding overriding the global padding */
+.glass-input-search {
+  padding-left: 36px !important;
+}
+
 /* User credit pill in header */
 .flex.items-center.bg-neutral-100\/90 {
   background: rgba(255, 245, 247, 0.95) !important;
