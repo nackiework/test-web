@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { 
   Sparkles, 
   Users, 
@@ -11,7 +11,6 @@ import {
   Search, 
   LogIn, 
   LogOut, 
-  User, 
   CreditCard, 
   Check, 
   X, 
@@ -22,12 +21,8 @@ import {
   ExternalLink,
   ChevronRight,
   Info,
-  DollarSign,
-  Box,
-  Smile,
   Globe,
   Camera,
-  Layers,
   ArrowRight,
   MessageSquare,
   Image as ImageIcon
@@ -107,10 +102,10 @@ const MOCK_FONTS = [
 ];
 
 const MOCK_RENTALS = [
-  { id: 1, name: "เช่าสิทธิ์กลุ่มบล็อกพรีเมียม (Wish Block System)", category: "ปล่อยเช่าบล็อก", basePrice: 29, duration: 7, rateDesc: "29 เครดิต / 7 วัน", desc: "เข้าถึงคลังของตกแต่งบล็อกทุกประเภท พร้อมอัปเดตใหม่ๆ ตลอดสัปดาห์" },
-  { id: 2, name: "เช่าสิทธิ์ฟอนต์ใช้งานส่วนตัวยกเซ็ต", category: "ปล่อยเช่าแนวฟอนต์", basePrice: 89, duration: 30, rateDesc: "89 เครดิต / 30 วัน", desc: "เช่าลิขสิทธิ์ฟอนต์ Wish ทุกแบบไปใช้งานออกแบบส่วนตัวได้นาน 1 เดือนเต็ม" },
-  { id: 3, name: "เช่าเหมาคลังกลุ่มตูน + ของตกแต่ง", category: "ปล่อยเช่าบล็อก", basePrice: 59, duration: 15, rateDesc: "59 เครดิต / 15 วัน", desc: "แพ็กเกจสุดคุ้มสำหรับครีเอเตอร์สายแต่งภาพ ดึงรูปไปแต่งรีวิวสะใจครึ่งเดือน" },
-  { id: 4, name: "VIP All-Access Unlimited Pass", category: "แพ็กเกจเช่ารายเดือน", basePrice: 499, duration: 365, rateDesc: "499 เครดิต / ปี", desc: "ที่สุดแห่งความคุ้มค่า! ปล่อยเช่าลิขสิทธิ์ทุกอย่างในเครือ Wish ตลอดระยะเวลา 1 ปี" }
+  { id: 1, name: "เช่าสิทธิ์กลุ่มบล็อกพรีเมียม (Wish Block System)", category: "ปล่อยเช่าบล็อก", price: 29, rateDesc: "ถาวรตลอดชีพ", desc: "เข้าถึงคลังของตกแต่งบล็อกทุกประเภท พร้อมอัปเดตใหม่ๆ ตลอดสัปดาห์" },
+  { id: 2, name: "เช่าสิทธิ์ฟอนต์ใช้งานส่วนตัวยกเซ็ต", category: "ปล่อยเช่าแนวฟอนต์", price: 89, rateDesc: "ถาวรตลอดชีพ", desc: "เช่าลิขสิทธิ์ฟอนต์ Wish ทุกแบบไปใช้งานออกแบบส่วนตัวได้นาน 1 เดือนเต็ม" },
+  { id: 3, name: "เช่าเหมาคลังกลุ่มตูน + ของตกแต่ง", category: "ปล่อยเช่าบล็อก", price: 59, rateDesc: "ถาวรตลอดชีพ", desc: "แพ็กเกจสุดคุ้มสำหรับครีเอเตอร์สายแต่งภาพ ดึงรูปไปแต่งรีวิวสะใจครึ่งเดือน" },
+  { id: 4, name: "VIP All-Access Unlimited Pass", category: "แพ็กเกจปล่อยเช่าถาวร", price: 499, rateDesc: "ถาวรตลอดชีพ", desc: "ที่สุดแห่งความคุ้มค่า! ปล่อยเช่าลิขสิทธิ์ทุกอย่างในเครือ Wish ถาวรตลอดชีพ" }
 ];
 
 const MOCK_PARTNER_HOUSES = {
@@ -192,7 +187,17 @@ function App() {
   const [activeTab, setActiveTab] = useState(1);
   
   // --- MOCK AUTHENTICATION SYSTEM STATE ---
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedUser = localStorage.getItem('bywish_user');
+    if (savedUser) {
+      try {
+        return JSON.parse(savedUser);
+      } catch (e) {
+        console.error("Error loading user", e);
+      }
+    }
+    return null;
+  });
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -220,8 +225,10 @@ function App() {
   const [p3FontSize, setP3FontSize] = useState(24);
 
   // Page 4 Calculator
-  const [selectedRental, setSelectedRental] = useState(null);
-  const [rentalDays, setRentalDays] = useState(7);
+  const [selectedRental, setSelectedRental] = useState(() => {
+    return MOCK_RENTALS.length > 0 ? MOCK_RENTALS[0] : null;
+  });
+
 
   // Page 6 Urgent Modal
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
@@ -233,18 +240,6 @@ function App() {
   const [contactName, setContactName] = useState("");
   const [contactTopic, setContactTopic] = useState("แจ้งเรื่องทั่วไป");
   const [contactMessage, setContactMessage] = useState("");
-
-  // Load user from LocalStorage on mount
-  useEffect(() => {
-    const savedUser = localStorage.getItem('bywish_user');
-    if (savedUser) {
-      try {
-        setCurrentUser(JSON.parse(savedUser));
-      } catch (e) {
-        console.error("Error loading user", e);
-      }
-    }
-  }, []);
 
   const showNotification = (msg, type = 'success') => {
     setNotification({ text: msg, type });
@@ -350,7 +345,8 @@ function App() {
     };
     setCurrentUser(updatedUser);
     localStorage.setItem('bywish_user', JSON.stringify(updatedUser));
-    showNotification(`ซื้อ "${productName}" สำเร็จ หัก ${price} เครดิต คงเหลือ ${updatedUser.credits} เครดิต`, "success");
+
+    showNotification(`ทำรายการ "${productName}" สำเร็จ หัก ${price} เครดิต คงเหลือ ${updatedUser.credits} เครดิต`, "success");
   };
 
   const handleContactSubmit = (e) => {
@@ -363,12 +359,6 @@ function App() {
     setContactName("");
     setContactMessage("");
   };
-
-  useEffect(() => {
-    if (MOCK_RENTALS.length > 0 && !selectedRental) {
-      setSelectedRental(MOCK_RENTALS[0]);
-    }
-  }, []);
 
   // --- FILTER LOGIC ---
   const filteredGroups = MOCK_GROUPS.filter(item => {
@@ -392,7 +382,7 @@ function App() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col justify-between font-sans selection:bg-purple-200">
+    <div className="phone-mockup-wrapper selection:bg-purple-200">
       
       {/* Toast Notification with subtle pastel background */}
       {notification && (
@@ -406,176 +396,63 @@ function App() {
         </div>
       )}
 
-      {/* --- TOP BAR HEADER --- */}
-      <header className="glass-panel sticky top-0 z-40 px-6 md:px-12 py-4 flex items-center justify-between border-b shadow-sm">
-        <div className="flex items-center gap-4 cursor-pointer" onClick={() => setActiveTab(1)}>
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-pink-400 via-purple-500 to-indigo-500 flex items-center justify-center text-white font-medium text-base shadow-sm animate-pulse">
-            W
-          </div>
-          <div className="text-left">
-            <h1 className="text-lg font-bold tracking-tight m-0 bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-              By Wish Network
-            </h1>
-            <p className="text-[9px] text-purple-300 tracking-widest font-semibold uppercase">Magic Amusement Park Theme</p>
-          </div>
-        </div>
-
-        {/* Member Navigation with subtle pastel colors */}
-        <div className="flex items-center gap-3">
-          {currentUser ? (
-            <div className="flex items-center gap-3 bg-slate-900/60 px-3.5 py-1.5 rounded-xl border border-purple-500/30 text-xs shadow-sm">
-              <div className="flex flex-col text-left">
-                <span className="text-[9px] text-purple-300/80 truncate max-w-[100px] font-medium">{currentUser.email}</span>
-                <span className="font-bold text-yellow-300 flex items-center gap-1">
-                  <span>{currentUser.credits}</span> 
-                  <span className="text-[9px] font-normal text-purple-300">เครดิต</span>
-                </span>
+      {/* Centered Phone Viewport Frame */}
+      <div className="phone-mockup">
+        <div className="phone-screen bg-[#fffbf7] relative flex flex-col">
+          
+          {/* Top Bar Navigation inside the phone screen container */}
+          <header className="glass-panel sticky top-0 z-45 px-4 py-3.5 flex items-center justify-between border-b shadow-sm w-full bg-white/95">
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab(1)}>
+              <div className="w-8 h-8 rounded-lg bg-[#ff8fae] flex items-center justify-center text-white font-medium text-sm shadow-sm animate-pulse flex-shrink-0">
+                W
               </div>
-              <button 
-                onClick={() => setIsCreditOpen(true)}
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-650 hover:to-purple-700 text-white font-medium py-1 px-3 rounded-lg shadow transition-all text-[11px] flex items-center gap-1 cursor-pointer"
-              >
-                <CreditCard className="w-3 h-3" />
-                <span>เติมเครดิต</span>
-              </button>
-              <button 
-                onClick={handleLogout}
-                className="p-1 text-purple-300 hover:text-rose-400 rounded transition-all cursor-pointer"
-                title="ออกจากระบบ"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-              </button>
+              <div className="text-left">
+                <h1 className="text-sm font-black tracking-tight m-0 text-[#ff8fae]">
+                  By Wish Network
+                </h1>
+                <p className="text-[7.5px] text-pink-400 tracking-widest font-extrabold uppercase">Magic Amusement Park</p>
+              </div>
             </div>
-          ) : (
+
+            {/* Member state pill */}
             <div className="flex items-center gap-2">
-              <button 
-                onClick={() => setIsLoginOpen(true)}
-                className="flex items-center gap-1 bg-purple-950/60 hover:bg-purple-900/80 text-purple-200 border border-purple-500/50 font-semibold py-1.5 px-3.5 rounded-lg transition-all text-xs cursor-pointer shadow-sm"
-              >
-                <LogIn className="w-3 h-3 text-purple-400" />
-                <span>เข้าสู่ระบบ</span>
-              </button>
-              <button 
-                onClick={() => setIsRegisterOpen(true)}
-                className="flex items-center gap-1 bg-gradient-to-r from-purple-500 via-purple-600 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-1.5 px-3.5 rounded-lg transition-all text-xs cursor-pointer shadow-sm"
-              >
-                <User className="w-3 h-3 text-purple-250" />
-                <span>สมัครสมาชิก</span>
-              </button>
+              {currentUser ? (
+                <div className="flex items-center gap-1.5 bg-neutral-100/90 px-2 py-1 rounded-xl border border-sky-100 shadow-sm text-[10px]">
+                  <div className="flex flex-col text-left">
+                    <span className="font-black text-slate-800 flex items-center gap-0.5">
+                      <span>{currentUser.credits}</span> 
+                      <span className="text-[7.5px] font-bold text-purple-450">เครดิต</span>
+                    </span>
+                  </div>
+                  <button 
+                    onClick={() => { setActiveTab(5); setIsCreditOpen(true); }}
+                    className="p-1 bg-[#ff8fae] rounded-md text-white shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center justify-center border-none"
+                    title="เติมเครดิต"
+                  >
+                    <CreditCard className="w-2.5 h-2.5" />
+                  </button>
+                  <button 
+                    onClick={handleLogout}
+                    className="p-1 text-rose-500 hover:bg-rose-50 rounded-md transition-all active:scale-95 flex items-center justify-center border-none"
+                    title="ออกจากระบบ"
+                  >
+                    <LogOut className="w-2.5 h-2.5" />
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={() => setIsLoginOpen(true)}
+                  className="flex items-center gap-1 bg-[#ff8fae] text-white font-bold py-1.5 px-3 rounded-xl transition-all text-[10px] shadow-sm cursor-pointer border-none"
+                >
+                  <LogIn className="w-2.5 h-2.5" />
+                  <span>เข้าสู่ระบบ</span>
+                </button>
+              )}
             </div>
-          )}
-        </div>
-      </header>
+          </header>
 
-      {/* --- MAIN PAGE LAYOUT --- */}
-      <div className="flex-1 max-w-6xl w-full mx-auto px-6 md:px-8 py-8 flex flex-col lg:flex-row gap-8">
-        
-        {/* SIDEBAR NAVIGATION - MINIMAL SLEEK LIST */}
-        <aside className="lg:w-56 w-full flex flex-col gap-2">
-          <nav className="glass-panel p-3 rounded-2xl flex lg:flex-col overflow-x-auto lg:overflow-x-visible gap-1.5 scrollbar-none shadow-sm">
-            
-            <button 
-              onClick={() => setActiveTab(1)}
-              className={`flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl font-medium text-xs tracking-tight transition-all whitespace-nowrap cursor-pointer w-full text-left ${
-                activeTab === 1 
-                  ? 'bg-gradient-to-r from-purple-500 via-purple-600 to-pink-500 text-white shadow-sm font-semibold' 
-                  : 'text-purple-700 hover:bg-purple-100/40 hover:text-purple-950'
-              }`}
-            >
-              <Home className="w-3.5 h-3.5" />
-              <span>1. แนะนำตัว & ต้อนรับ</span>
-            </button>
-
-            <button 
-              onClick={() => setActiveTab(2)}
-              className={`flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl font-medium text-xs tracking-tight transition-all whitespace-nowrap cursor-pointer w-full text-left ${
-                activeTab === 2 
-                  ? 'bg-gradient-to-r from-purple-500 via-purple-600 to-pink-500 text-white shadow-sm font-semibold' 
-                  : 'text-purple-700 hover:bg-purple-100/40 hover:text-purple-950'
-              }`}
-            >
-              <Users className="w-3.5 h-3.5" />
-              <span>2. เครือกลุ่ม By Wish</span>
-            </button>
-
-            <button 
-              onClick={() => setActiveTab(3)}
-              className={`flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl font-medium text-xs tracking-tight transition-all whitespace-nowrap cursor-pointer w-full text-left ${
-                activeTab === 3 
-                  ? 'bg-gradient-to-r from-purple-500 via-purple-600 to-pink-500 text-white shadow-sm font-semibold' 
-                  : 'text-purple-700 hover:bg-purple-100/40 hover:text-purple-950'
-              }`}
-            >
-              <Type className="w-3.5 h-3.5" />
-              <span>3. เครือฟอนต์ By Wish</span>
-            </button>
-
-            <button 
-              onClick={() => setActiveTab(4)}
-              className={`flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl font-medium text-xs tracking-tight transition-all whitespace-nowrap cursor-pointer w-full text-left ${
-                activeTab === 4 
-                  ? 'bg-gradient-to-r from-purple-500 via-purple-600 to-pink-500 text-white shadow-sm font-semibold' 
-                  : 'text-purple-700 hover:bg-purple-100/40 hover:text-purple-950'
-              }`}
-            >
-              <Calendar className="w-3.5 h-3.5" />
-              <span>4. ของปล่อยเช่า</span>
-            </button>
-
-            <button 
-              onClick={() => setActiveTab(5)}
-              className={`flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl font-medium text-xs tracking-tight transition-all whitespace-nowrap cursor-pointer w-full text-left ${
-                activeTab === 5 
-                  ? 'bg-gradient-to-r from-purple-500 via-purple-600 to-pink-500 text-white shadow-sm font-semibold' 
-                  : 'text-purple-700 hover:bg-purple-100/40 hover:text-purple-950'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>5. รวมฟอนต์บ้านอื่น</span>
-            </button>
-
-            <button 
-              onClick={() => setActiveTab(6)}
-              className={`flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl font-medium text-xs tracking-tight transition-all whitespace-nowrap cursor-pointer w-full text-left ${
-                activeTab === 6 
-                  ? 'bg-gradient-to-r from-purple-500 via-purple-600 to-pink-500 text-white shadow-sm font-semibold' 
-                  : 'text-purple-700 hover:bg-purple-100/40 hover:text-purple-950'
-              }`}
-            >
-              <HelpCircle className="w-3.5 h-3.5" />
-              <span>6. แก้ไขไลน์หลุดกลุ่ม</span>
-            </button>
-
-            <button 
-              onClick={() => setActiveTab(7)}
-              className={`flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl font-medium text-xs tracking-tight transition-all whitespace-nowrap cursor-pointer w-full text-left ${
-                activeTab === 7 
-                  ? 'bg-gradient-to-r from-purple-500 via-purple-600 to-pink-500 text-white shadow-sm font-semibold' 
-                  : 'text-purple-700 hover:bg-purple-100/40 hover:text-purple-950'
-              }`}
-            >
-              <Phone className="w-3.5 h-3.5" />
-              <span>7. ติดต่อเรา & กฎร้าน</span>
-            </button>
-
-          </nav>
-
-          {/* Minimalist Sidebar Announcement Banner with Star-Glow */}
-          <div className="glass-panel p-4.5 rounded-2xl text-left hidden lg:block border border-purple-500/20 shadow-sm mt-1">
-            <h4 className="text-[10px] font-bold text-yellow-300 uppercase tracking-widest mb-1.5 flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-yellow-300 animate-spin" />
-              <span>ข่าวสารเวทมนตร์</span>
-            </h4>
-            <p className="text-[11px] text-purple-200 leading-relaxed font-normal">
-              ยินดีต้อนรับสู่สวนสนุกเวทมนตร์แห่งความคิดสร้างสรรค์! อัปเดตข้อมูลตัวแทนและพรีวิวภาพจริงแล้ววันนี้
-            </p>
-          </div>
-        </aside>
-
-        {/* --- MAIN DISPLAY WORKSPACE --- */}
-        <main className="flex-1">
-
-          {/* --- PAGE 1: WELCOME SCREEN (AMUSEMENT PARK THEME & REAL PORTFOLIO) --- */}
+          {/* MAIN PAGE VIEWPORT FOR SCROLLING CONTENT */}
+          <main className="flex-grow min-h-0 p-3 pb-28 overflow-y-auto scrollbar-none">
           {activeTab === 1 && (
             <div className="flex flex-col gap-6 text-left animate-fadeIn">
               
@@ -583,243 +460,218 @@ function App() {
               <div className="glass-panel p-8 md:p-10 rounded-2xl relative overflow-hidden flex flex-col md:flex-row items-center gap-8 shadow-md border-purple-500/35">
                 
                 {/* Glowing nebulas background inside card */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl -z-10"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute top-0 right-0 w-48 h-48 bg-pink-400/10 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-sky-400/10 rounded-full blur-3xl -z-10"></div>
 
-                {/* Styled portrait frame with beautiful pink-purple gradient */}
-                <div className="w-44 h-44 md:w-52 md:h-52 rounded-xl bg-gradient-to-tr from-yellow-300 via-pink-400 to-purple-500 p-1 flex-shrink-0 flex items-center justify-center border border-white/20 shadow-md relative floating-element">
-                  <div className="w-full h-full rounded-lg bg-slate-950 flex flex-col items-center justify-center border border-purple-900/50 relative overflow-hidden">
+                {/* Portrait avatar - centered for mobile */}
+                <div className="w-32 h-32 rounded-2xl bg-[#ff8fae] p-0.75 flex-shrink-0 flex items-center justify-center shadow-lg relative floating-element">
+                  <div className="w-full h-full rounded-xl bg-white flex flex-col items-center justify-center relative overflow-hidden">
                     <img 
                       src={getAssetUrl(PORTFOLIO_IMAGES_PAGE1[4])} 
                       alt="By Wish Avatar" 
                       className="w-full h-full object-cover"
                       onClick={() => setLightboxImage(PORTFOLIO_IMAGES_PAGE1[4])}
-                      title="คลิกเพื่อขยายรูปภาพ"
                     />
-                    <div className="absolute bottom-0 left-0 right-0 bg-slate-950/80 py-1 text-center border-t border-purple-500/30">
-                      <span className="text-[9px] text-purple-200 font-bold uppercase tracking-widest">WISH FOUNDER</span>
+                    <div className="absolute bottom-0 left-0 right-0 bg-pink-500/80 py-0.5 text-center">
+                      <span className="text-[8px] text-white font-bold uppercase tracking-wider">WISH FOUNDER</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex-1 flex flex-col gap-3">
-                  <span className="bg-purple-900/80 text-purple-200 border border-purple-500/50 font-semibold px-2.5 py-1 rounded text-[10px] w-fit uppercase tracking-wider flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-yellow-300" />
+                <div className="flex flex-col gap-2.5 items-center w-full">
+                  <span className="bg-pink-100 text-pink-600 border border-pink-200 font-bold px-3 py-1 rounded-full text-[10px] uppercase tracking-wider flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" />
                     <span>Welcome to Our Space</span>
                   </span>
-                  <h2 className="text-2xl md:text-3.5xl font-black tracking-tight leading-tight m-0 bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-300 bg-clip-text text-transparent">
+                  <h2 className="text-xl font-black tracking-tight leading-tight m-0 text-[#ff8fae]">
                     ยินดีต้อนรับสู่ WISH / WITH
                   </h2>
-                  <p className="text-purple-200 text-xs md:text-sm leading-relaxed font-normal">
-                    ยินดีที่ได้รู้จักค่ะ! ในฐานะผู้ก่อตั้งและเจ้าของกลุ่มเครือ Wish รวมถึงผู้สร้างสรรค์ฟอนต์ในเครือ With 
-                    มีความตั้งใจจริงที่อยากจะขับเคลื่อนไอเดียดี ๆ ผ่านงานออกแบบ และตัวอักษรที่จะช่วยเติมเต็มทุกความฝันของคุณให้เป็นจริงในจุดหมายปลายทางแห่งความสนุกและเวทมนตร์แห่งนี้
+                  <p className="text-[#735c50] text-xs leading-relaxed font-normal max-w-xs">
+                    ยินดีที่ได้รู้จักค่ะ! ในฐานะผู้ก่อตั้งและเจ้าของกลุ่มเครือ Wish รวมถึงผู้สร้างสรรค์ฟอนต์ในเครือ With มีความตั้งใจจริงที่อยากจะขับเคลื่อนไอเดียดี ๆ ผ่านงานออกแบบและตัวอักษรสวยงาม
                   </p>
                   
-                  <div className="flex flex-wrap gap-2.5 mt-2.5">
-                    <button 
-                      onClick={() => setActiveTab(2)}
-                      className="bg-gradient-to-r from-purple-500 via-purple-600 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-5 py-2.5 rounded-lg transition-all text-xs shadow-md cursor-pointer flex items-center gap-1.5"
-                    >
-                      <Users className="w-3.5 h-3.5" />
-                      <span> Make a WISH, take a ride!</span>
-                    </button>
-                  </div>
+                  <button 
+                    onClick={() => setActiveTab(2)}
+                    className="w-full bg-[#ff8fae] text-white font-bold py-3 rounded-xl transition-all text-sm shadow-md cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <Users className="w-4 h-4" />
+                    <span>Make a WISH, take a ride! ✨</span>
+                  </button>
                 </div>
               </div>
 
-              {/* Magical Portfolio Slide Showcase (Grid of large static images they provided) */}
+              {/* Portfolio Showcase - 2 columns for mobile */}
               <div className="flex flex-col gap-3">
-                <h3 className="text-sm font-bold text-yellow-300 uppercase tracking-widest flex items-center gap-1">
-                  <ImageIcon className="w-4 h-4 text-purple-400" />
-                  <span>คลังผลงานเวทมนตร์ (Magical Showcase Portfolio)</span>
-                </h3>
+                <div className="flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-pink-400" />
+                  <h3 className="text-sm font-bold text-[#422f25]">คลังผลงานของเรา</h3>
+                </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   {PORTFOLIO_IMAGES_PAGE1.slice(0, 4).map((imgUrl, idx) => (
                     <div 
                       key={idx}
                       onClick={() => setLightboxImage(imgUrl)}
-                      className="glass-panel p-1 rounded-xl cursor-pointer overflow-hidden shadow group hover:border-purple-400/80 transition-all"
+                      className="glass-panel p-1 rounded-xl cursor-pointer overflow-hidden shadow-sm group transition-all active:scale-95"
                     >
-                      <div className="aspect-[4/5] rounded-lg bg-slate-900 overflow-hidden relative">
+                      <div className="aspect-[4/5] rounded-lg overflow-hidden relative">
                         <img 
                           src={getAssetUrl(imgUrl)} 
-                          alt={`Magic Artwork ${idx+1}`} 
-                          className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" 
+                          alt={`Artwork ${idx+1}`} 
+                          className="w-full h-full object-cover group-active:scale-105 transition-all duration-300" 
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all flex items-end justify-center pb-2.5">
-                          <span className="text-[10px] font-bold text-purple-200">ขยายรูปภาพ</span>
-                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* RECRUITMENT CAMPAIGN BOARD (FROM SLIDE 2) */}
-              <div className="glass-panel p-6 md:p-8 rounded-2xl border border-yellow-500/20 shadow-md bg-gradient-to-tr from-purple-950/40 via-slate-950/70 to-pink-950/20 flex flex-col gap-6 text-left">
+              {/* RECRUITMENT CAMPAIGN BOARD */}
+              <div className="glass-panel p-4 rounded-2xl border border-pink-200 shadow-sm flex flex-col gap-4 text-left">
                 
-                <div className="border-b border-purple-500/30 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-                  <div>
-                    <h3 className="text-base font-extrabold text-yellow-300 m-0 flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 text-yellow-300 animate-spin" />
-                      <span>เปิดรับตัวแทนจำหน่ายรุ่นที่ 1 (WISH & WITH REPRESENTATIVES GEN 1)</span>
-                    </h3>
-                    <p className="text-[11px] text-purple-300/80 mt-0.5">โอกาสทองในการสร้างรายได้ คืนทุนไวแบบถาวร!</p>
+                <div className="border-b border-pink-200 pb-3 flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-amber-400 animate-spin" />
+                    <h3 className="text-sm font-extrabold text-[#422f25] m-0">เปิดรับตัวแทนจำหน่าย รุ่นที่ 1</h3>
                   </div>
-                  <span className="bg-gradient-to-r from-yellow-300 to-amber-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">
-                    รับจำนวนจำกัด
-                  </span>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-[#735c50]">WISH & WITH GEN 1 — โอกาสทอง คืนทุนไว!</p>
+                    <span className="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">
+                      จำกัด
+                    </span>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  
-                  {/* Group Representatives card */}
-                  <div className="glass-panel p-5 rounded-xl border border-purple-500/20 flex flex-col justify-between gap-4">
-                    <div>
-                      <span className="bg-purple-900/60 text-purple-200 text-[9px] font-bold px-2 py-0.5 rounded border border-purple-500/30 uppercase tracking-widest">
-                        ตัวแทนขายบ้านกลุ่ม WISH
-                      </span>
-                      <h4 className="text-base font-extrabold text-white mt-2 mb-1.5">ตัวแทนเครือกลุ่ม รุ่นที่ 1</h4>
-                      <p className="text-[11px] text-purple-200 leading-relaxed font-normal">
-                        ไม่มีการคัดออกจากการเป็นสมาชิก เสียค่าสมัครครั้งเดียว คืนทุนไวเนื่องจากมีโบนัสการทำยอดจำหน่ายและมีส่วนแบ่งให้ตั้งแต่ชิ้นแรก!
-                      </p>
-                      
-                      <div className="mt-4 bg-slate-950/50 p-3 rounded-lg border border-purple-900/50 flex justify-between items-center text-xs">
-                        <span className="text-purple-300">ค่าสมัครสมาชิก</span>
-                        <span className="text-sm font-black text-yellow-300">599 บาท (ถาวร)</span>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-purple-500/20 pt-3 text-[10px] text-purple-400 font-semibold italic flex items-center gap-1">
-                      <Info className="w-3.5 h-3.5" />
-                      <span>เงื่อนไข: ต้องโพสต์สม่ำเสมอ (สุ่มเช็ค)</span>
-                    </div>
+                {/* Group Rep card */}
+                <div className="bg-pink-50 rounded-xl p-4 border border-pink-200 flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <span className="bg-pink-200 text-pink-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">WISH กลุ่ม</span>
+                    <span className="text-lg font-black text-amber-600">599 บาท</span>
                   </div>
-
-                  {/* Font Representatives card */}
-                  <div className="glass-panel p-5 rounded-xl border border-pink-500/20 flex flex-col justify-between gap-4">
-                    <div>
-                      <span className="bg-pink-900/60 text-pink-200 text-[9px] font-bold px-2 py-0.5 rounded border border-pink-500/30 uppercase tracking-widest">
-                        ตัวแทนขายบ้านฟ้อนต์ WITH
-                      </span>
-                      <h4 className="text-base font-extrabold text-white mt-2 mb-1.5">ตัวแทนเครือฟ้อนต์ รุ่นที่ 1</h4>
-                      <p className="text-[11px] text-purple-200 leading-relaxed font-normal">
-                        รับจำนวนจำกัดเพียง 15 ท่านแรกเท่านั้น ไม่มีการคัดออก มีฟอนต์ดีไซน์ใหม่ให้ขายเรื่อยๆ พร้อมมอบอัตราเรทส่วนแบ่งสูงสุดถึง 40% คืนทุนไวแน่นอน!
-                      </p>
-                      
-                      <div className="mt-4 bg-slate-950/50 p-3 rounded-lg border border-purple-900/50 flex justify-between items-center text-xs">
-                        <span className="text-purple-300">ค่าสมัครสมาชิก</span>
-                        <span className="text-sm font-black text-pink-400">299 บาท (จำกัด 15 คน)</span>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-pink-500/20 pt-3 text-[10px] text-purple-400 font-semibold italic flex items-center gap-1">
-                      <Info className="w-3.5 h-3.5" />
-                      <span>เงื่อนไข: ต้องโพสต์สม่ำเสมอ (สุ่มเช็ค)</span>
-                    </div>
+                  <h4 className="text-sm font-extrabold text-[#422f25] m-0">ตัวแทนเครือกลุ่ม รุ่นที่ 1</h4>
+                  <p className="text-xs text-[#735c50] leading-relaxed">
+                    ไม่มีการคัดออก เสียค่าสมัครครั้งเดียว มีโบนัสและส่วนแบ่งตั้งแต่ชิ้นแรก!
+                  </p>
+                  <div className="flex items-center gap-1 text-[10px] text-[#735c50]">
+                    <Info className="w-3 h-3" />
+                    <span>เงื่อนไข: ต้องโพสต์สม่ำเสมอ (สุ่มเช็ค)</span>
                   </div>
-
                 </div>
 
-                <div className="border-t border-purple-500/30 pt-4 text-center">
-                  <button 
-                    onClick={() => {
-                      showNotification("ยินดีต้อนรับเข้าสู่ครอบครัวของเราค่ะ นำไปยังหน้าช่องทางการติดต่อสมัครงาน", "success");
-                      setActiveTab(7);
-                    }}
-                    className="bg-white hover:bg-purple-100 text-purple-950 font-bold px-6 py-2.5 rounded-lg text-xs cursor-pointer shadow transition-all inline-flex items-center gap-1.5"
-                  >
-                    <span>ติดต่อสมัครเป็นตัวแทนจำหน่าย</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                {/* Font Rep card */}
+                <div className="bg-sky-50 rounded-xl p-4 border border-sky-200 flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <span className="bg-sky-200 text-sky-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">WITH ฟ้อนต์</span>
+                    <span className="text-lg font-black text-pink-500">299 บาท</span>
+                  </div>
+                  <h4 className="text-sm font-extrabold text-[#422f25] m-0">ตัวแทนเครือฟ้อนต์ รุ่นที่ 1</h4>
+                  <p className="text-xs text-[#735c50] leading-relaxed">
+                    รับจำกัด 15 คนแรก! ส่วนแบ่งสูงสุด 40% มีฟ้อนต์ใหม่ให้ขายตลอด
+                  </p>
+                  <div className="flex items-center gap-1 text-[10px] text-[#735c50]">
+                    <Info className="w-3 h-3" />
+                    <span>เงื่อนไข: ต้องโพสต์สม่ำเสมอ (สุ่มเช็ค)</span>
+                  </div>
                 </div>
+
+                <button 
+                  onClick={() => {
+                    showNotification("นำไปยังช่องทางติดต่อสมัครงานค่ะ", "success");
+                    setActiveTab(7);
+                  }}
+                  className="w-full bg-[#ff8fae] hover:bg-[#ff7ca2] text-white font-bold py-3 rounded-xl text-sm cursor-pointer shadow-sm transition-all flex items-center justify-center gap-2"
+                >
+                  <span>✉️ ติดต่อสมัครเป็นตัวแทน</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
 
             </div>
           )}
 
-          {/* --- PAGE 2: GROUPS LIST NETWORK (STATIC ASSETS REDESIGN) --- */}
+          {/* --- PAGE 2: GROUPS LIST NETWORK --- */}
           {activeTab === 2 && (
-            <div className="flex flex-col gap-6 text-left animate-fadeIn">
+            <div className="flex flex-col gap-4 text-left">
               
-              {/* Header Title with search and price sorter */}
-              <div className="glass-panel p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
+              {/* Page Header */}
+              <div className="glass-panel p-4 rounded-2xl flex flex-col gap-3 shadow-sm">
                 <div>
-                  <h2 className="text-lg font-bold text-neutral-800 m-0 flex items-center gap-2">
-                    <Users className="w-4 h-4 text-purple-400" /> เครือกลุ่ม By Wish
+                  <h2 className="text-base font-bold text-[#422f25] m-0 flex items-center gap-2">
+                    <Users className="w-4 h-4 text-pink-400" /> เครือกลุ่ม By Wish
                   </h2>
-                  <p className="text-[11px] text-purple-300">กลุ่มของตกแต่งและภาพลายเส้นการ์ตูนในธีมสวนสนุกเวทมนตร์</p>
+                  <p className="text-xs text-[#735c50] mt-0.5">กลุ่มของตกแต่งและภาพลายเส้นการ์ตูนสวนสนุกเวทมนตร์</p>
                 </div>
 
-                {/* Tab layout switches */}
-                <div className="flex bg-slate-950/80 border border-purple-500/30 p-1 rounded-lg text-xs gap-1">
+                {/* Tab layout switches - full width */}
+                <div className="flex bg-pink-50 border border-pink-200 p-1 rounded-xl text-xs gap-1">
                   <button 
                     onClick={() => setP2SubView("groups")}
-                    className={`px-3 py-1 rounded transition-all cursor-pointer font-bold ${
-                      p2SubView === "groups" ? 'bg-purple-600 text-white shadow-sm' : 'text-purple-300 hover:text-white'
+                    className={`flex-1 px-2 py-2 rounded-lg transition-all cursor-pointer font-bold text-[11px] ${
+                      p2SubView === "groups" ? 'bg-[#ff8fae] text-white shadow-sm' : 'text-[#735c50]'
                     }`}
                   >
-                    รายการแพ็กเกจ
+                    แพ็กเกจ
                   </button>
                   <button 
                     onClick={() => setP2SubView("gallery")}
-                    className={`px-3 py-1 rounded transition-all cursor-pointer font-bold ${
-                      p2SubView === "gallery" ? 'bg-purple-600 text-white shadow-sm' : 'text-purple-300 hover:text-white'
+                    className={`flex-1 px-2 py-2 rounded-lg transition-all cursor-pointer font-bold text-[11px] ${
+                      p2SubView === "gallery" ? 'bg-[#ff8fae] text-white shadow-sm' : 'text-[#735c50]'
                     }`}
                   >
-                    คลังภาพตกแต่งจริง
+                    คลังภาพ
                   </button>
                   <button 
                     onClick={() => setP2SubView("rates")}
-                    className={`px-3 py-1 rounded transition-all cursor-pointer font-bold ${
-                      p2SubView === "rates" ? 'bg-purple-600 text-white shadow-sm' : 'text-purple-300 hover:text-white'
+                    className={`flex-1 px-2 py-2 rounded-lg transition-all cursor-pointer font-bold text-[11px] ${
+                      p2SubView === "rates" ? 'bg-[#ff8fae] text-white shadow-sm' : 'text-[#735c50]'
                     }`}
                   >
-                    กรอบเรทราคา
+                    เรทราคา
                   </button>
                 </div>
               </div>
 
               {/* VIEW 1: PRODUCT LIST */}
               {p2SubView === "groups" && (
-                <div className="flex flex-col gap-6">
-                  {/* Search and Sorters */}
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="relative flex-1 md:flex-initial">
-                      <input 
-                        type="text" 
-                        placeholder="ค้นหาชื่อกลุ่ม..."
-                        value={p2Search}
-                        onChange={(e) => setP2Search(e.target.value)}
-                        className="glass-input text-xs rounded-lg pl-8 pr-4 py-1.5 w-full md:w-44 text-neutral-700"
-                      />
-                      <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-purple-400" />
+                <div className="flex flex-col gap-4">
+                  {/* Search and Sorters - compact for mobile */}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <input 
+                          type="text" 
+                          placeholder="ค้นหาชื่อกลุ่ม..."
+                          value={p2Search}
+                          onChange={(e) => setP2Search(e.target.value)}
+                          className="glass-input text-xs rounded-xl pl-8 pr-3 py-2.5 w-full"
+                        />
+                        <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-pink-400" />
+                      </div>
+
+                      <div className="flex items-center gap-1 bg-white border border-pink-200 px-2.5 py-2 rounded-xl text-xs text-[#735c50] font-medium cursor-pointer flex-shrink-0">
+                        <ArrowUpDown className="w-3 h-3 text-pink-400" />
+                        <select 
+                          value={p2Sort} 
+                          onChange={(e) => setP2Sort(e.target.value)}
+                          className="bg-transparent border-none outline-none font-sans font-semibold cursor-pointer text-xs text-[#735c50]"
+                        >
+                          <option value="default">เรียง</option>
+                          <option value="low-to-high">ราคา ↑</option>
+                          <option value="high-to-low">ราคา ↓</option>
+                        </select>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-1 bg-slate-900 border border-purple-500/30 px-2.5 py-1.5 rounded-lg text-xs text-purple-300 font-medium cursor-pointer">
-                      <ArrowUpDown className="w-3 h-3 text-purple-400" />
-                      <select 
-                        value={p2Sort} 
-                        onChange={(e) => setP2Sort(e.target.value)}
-                        className="bg-transparent border-none outline-none font-sans font-semibold cursor-pointer text-xs"
-                      >
-                        <option value="default">เรียงลำดับราคา</option>
-                        <option value="low-to-high">ราคาต่ำ ไป สูง</option>
-                        <option value="high-to-low">ราคาสูง ไป ต่ำ</option>
-                      </select>
-                    </div>
-
-                    {/* Quick Filters */}
-                    <div className="flex flex-wrap gap-1.5">
+                    {/* Category filter chips */}
+                    <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                       {["ทั้งหมด", "กลุ่มบล็อก", "กลุ่มตูน", "กลุ่มของตกแต่ง"].map((cat) => (
                         <button
                           key={cat}
                           onClick={() => setP2Category(cat)}
-                          className={`px-3 py-1.5 rounded-lg font-bold text-[10px] transition-all whitespace-nowrap cursor-pointer ${
+                          className={`px-3 py-1.5 rounded-full font-bold text-[11px] transition-all whitespace-nowrap cursor-pointer flex-shrink-0 ${
                             p2Category === cat 
-                              ? 'bg-purple-600 text-white shadow-sm' 
-                              : 'bg-slate-900/60 border border-purple-500/30 text-purple-300 hover:bg-slate-900/90'
+                              ? 'bg-[#ff8fae] text-white shadow-sm' 
+                              : 'bg-white border border-pink-200 text-[#735c50]'
                           }`}
                         >
                           {cat}
@@ -830,62 +682,57 @@ function App() {
 
                   {/* Grid */}
                   {filteredGroups.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                    <div className="flex flex-col gap-3">
                       {filteredGroups.map((item) => (
                         <div 
                           key={item.id} 
-                          className="glass-panel glass-panel-hover p-4.5 rounded-2xl border flex flex-col justify-between gap-4 text-left shadow-sm relative overflow-hidden group border-purple-500/20"
+                          className="glass-panel p-4 rounded-2xl border border-pink-100 flex gap-3 text-left shadow-sm relative overflow-hidden"
                         >
                           {item.badge && (
-                            <div className="absolute top-3 right-3 text-[9px] font-bold px-2 py-0.5 rounded bg-gradient-to-r from-purple-500 to-pink-500 text-white uppercase tracking-wider shadow-sm z-10">
+                            <div className="absolute top-3 right-3 text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#ff8fae] text-white uppercase tracking-wide shadow-sm z-10">
                               {item.badge}
                             </div>
                           )}
 
-                          <div className="flex flex-col gap-2">
-                            {/* Rendering real asset path inside preview shape! */}
-                            <div 
-                              onClick={() => setLightboxImage(item.image)}
-                              className="w-full h-36 rounded-xl bg-slate-950 overflow-hidden flex items-center justify-center shadow-inner mb-1 border border-purple-900/30 relative cursor-zoom-in"
-                            >
-                              <img 
-                                src={getAssetUrl(item.image)} 
-                                alt={item.name} 
-                                className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" 
-                              />
-                              <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
-                                <span className="text-[10px] font-bold text-white bg-slate-950/80 px-2 py-1 rounded border border-purple-500/30">ขยายภาพจริง</span>
-                              </div>
-                            </div>
-
-                            <span className="text-[9px] font-bold tracking-wider uppercase text-purple-300 bg-purple-900/50 px-2 py-0.5 rounded w-fit border border-purple-500/30">
-                              {item.category}
-                            </span>
-
-                            <h3 className="font-bold text-white text-sm m-0 leading-snug line-clamp-1">
-                              {item.name}
-                            </h3>
-
-                            <p className="text-[11px] text-purple-300 leading-relaxed line-clamp-2">
-                              {item.desc}
-                            </p>
+                          {/* Thumbnail - left side */}
+                          <div 
+                            onClick={() => setLightboxImage(item.image)}
+                            className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 cursor-zoom-in bg-pink-50"
+                          >
+                            <img 
+                              src={getAssetUrl(item.image)} 
+                              alt={item.name} 
+                              className="w-full h-full object-cover" 
+                            />
                           </div>
 
-                          <div className="border-t border-purple-500/20 pt-3 flex items-center justify-between">
-                            <div className="text-left">
-                              <p className="text-[9px] text-purple-400">ราคาซื้อสิทธิ์</p>
-                              <p className="text-sm font-bold text-yellow-300">
-                                {item.price} เครดิต
+                          {/* Info - right side */}
+                          <div className="flex-1 flex flex-col justify-between gap-2 min-w-0">
+                            <div className="flex flex-col gap-1">
+                              <span className="text-[9px] font-bold uppercase text-pink-500 bg-pink-50 px-2 py-0.5 rounded-full w-fit">
+                                {item.category}
+                              </span>
+                              <h3 className="font-bold text-[#422f25] text-sm m-0 leading-snug">
+                                {item.name}
+                              </h3>
+                              <p className="text-[11px] text-[#735c50] leading-relaxed line-clamp-2">
+                                {item.desc}
                               </p>
                             </div>
 
-                            <button 
-                              onClick={() => simulateBuyProduct(item.name, item.price)}
-                              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-3.5 py-1.5 rounded-lg shadow transition-all text-xs cursor-pointer flex items-center gap-1"
-                            >
-                              <ShoppingBag className="w-3 h-3" />
-                              <span>เข้าร่วมกลุ่ม</span>
-                            </button>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-[9px] text-[#735c50]">ราคาซื้อสิทธิ์</p>
+                                <p className="text-sm font-black text-amber-600">{item.price} เครดิต</p>
+                              </div>
+                              <button 
+                                onClick={() => simulateBuyProduct(item.name, item.price)}
+                                className="bg-[#ff8fae] hover:bg-[#ff7ca2] text-white font-bold px-3 py-2 rounded-xl shadow-sm text-xs cursor-pointer flex items-center gap-1"
+                              >
+                                <ShoppingBag className="w-3 h-3" />
+                                <span>เข้าร่วม</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -909,15 +756,15 @@ function App() {
                       <span>ภาพการ์ตูนจริงในกลุ่ม (Chibi Toon Library)</span>
                       <span className="text-[9px] font-normal text-purple-400 lowercase">6 files</span>
                     </h3>
-                    <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+                    <div className="grid grid-cols-3 gap-2">
                       {TOON_GALLERY.map((imgUrl, idx) => (
                         <div 
                           key={idx}
                           onClick={() => setLightboxImage(imgUrl)}
-                          className="glass-panel p-0.5 rounded-xl cursor-pointer overflow-hidden border border-purple-500/20 hover:border-purple-400 group transition-all"
+                          className="rounded-xl cursor-pointer overflow-hidden border border-pink-100 active:scale-95 transition-all"
                         >
-                          <div className="aspect-square bg-slate-950 rounded-lg overflow-hidden relative">
-                            <img src={getAssetUrl(imgUrl)} alt={`Toon ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
+                          <div className="aspect-square bg-pink-50 rounded-xl overflow-hidden">
+                            <img src={getAssetUrl(imgUrl)} alt={`Toon ${idx+1}`} className="w-full h-full object-cover" />
                           </div>
                         </div>
                       ))}
@@ -925,20 +772,19 @@ function App() {
                   </div>
 
                   {/* Category 2: DECORATIONS GALLERY */}
-                  <div className="flex flex-col gap-3">
-                    <h3 className="text-xs font-extrabold text-pink-400 uppercase tracking-widest border-b border-purple-500/30 pb-1.5 flex justify-between items-center">
-                      <span>ภาพตกแต่งน่ารักในกลุ่ม (Cute Decors Library)</span>
-                      <span className="text-[9px] font-normal text-purple-400 lowercase">6 files</span>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-xs font-bold text-pink-500 flex items-center gap-1">
+                      <span>🌸 ภาพตกแต่งน่ารัก</span>
                     </h3>
-                    <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+                    <div className="grid grid-cols-3 gap-2">
                       {DECOR_GALLERY.map((imgUrl, idx) => (
                         <div 
                           key={idx}
                           onClick={() => setLightboxImage(imgUrl)}
-                          className="glass-panel p-0.5 rounded-xl cursor-pointer overflow-hidden border border-pink-500/20 hover:border-pink-400 group transition-all"
+                          className="rounded-xl cursor-pointer overflow-hidden border border-pink-100 active:scale-95 transition-all"
                         >
-                          <div className="aspect-square bg-slate-950 rounded-lg overflow-hidden relative">
-                            <img src={getAssetUrl(imgUrl)} alt={`Decor ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
+                          <div className="aspect-square bg-pink-50 rounded-xl overflow-hidden">
+                            <img src={getAssetUrl(imgUrl)} alt={`Decor ${idx+1}`} className="w-full h-full object-cover" />
                           </div>
                         </div>
                       ))}
@@ -946,20 +792,19 @@ function App() {
                   </div>
 
                   {/* Category 3: BLOCKS GALLERY */}
-                  <div className="flex flex-col gap-3">
-                    <h3 className="text-xs font-extrabold text-purple-300 uppercase tracking-widest border-b border-purple-500/30 pb-1.5 flex justify-between items-center">
-                      <span>ภาพกรอบข้อความและบล็อกจริง (Widget Blocks Library)</span>
-                      <span className="text-[9px] font-normal text-purple-400 lowercase">6 files</span>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-xs font-bold text-sky-500 flex items-center gap-1">
+                      <span>📦 กรอบบล็อกข้อความ</span>
                     </h3>
-                    <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+                    <div className="grid grid-cols-3 gap-2">
                       {BLOCK_GALLERY.map((imgUrl, idx) => (
                         <div 
                           key={idx}
                           onClick={() => setLightboxImage(imgUrl)}
-                          className="glass-panel p-0.5 rounded-xl cursor-pointer overflow-hidden border border-purple-500/20 hover:border-purple-400 group transition-all"
+                          className="rounded-xl cursor-pointer overflow-hidden border border-sky-100 active:scale-95 transition-all"
                         >
-                          <div className="aspect-square bg-slate-950 rounded-lg overflow-hidden relative">
-                            <img src={getAssetUrl(imgUrl)} alt={`Block ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
+                          <div className="aspect-square bg-sky-50 rounded-xl overflow-hidden">
+                            <img src={getAssetUrl(imgUrl)} alt={`Block ${idx+1}`} className="w-full h-full object-cover" />
                           </div>
                         </div>
                       ))}
@@ -967,20 +812,19 @@ function App() {
                   </div>
 
                   {/* Category 4: HEADER TUTORIALS */}
-                  <div className="flex flex-col gap-3">
-                    <h3 className="text-xs font-extrabold text-blue-400 uppercase tracking-widest border-b border-purple-500/30 pb-1.5 flex justify-between items-center">
-                      <span>ภาพสอนทำหัวป้ายประกอบ (Header Label Tutorials)</span>
-                      <span className="text-[9px] font-normal text-purple-400 lowercase">6 files</span>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-xs font-bold text-amber-600 flex items-center gap-1">
+                      <span>🏷️ สอนทำหัวป้าย</span>
                     </h3>
-                    <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+                    <div className="grid grid-cols-3 gap-2">
                       {HEADER_TUTORIALS.map((imgUrl, idx) => (
                         <div 
                           key={idx}
                           onClick={() => setLightboxImage(imgUrl)}
-                          className="glass-panel p-0.5 rounded-xl cursor-pointer overflow-hidden border border-blue-500/20 hover:border-blue-400 group transition-all"
+                          className="rounded-xl cursor-pointer overflow-hidden border border-amber-100 active:scale-95 transition-all"
                         >
-                          <div className="aspect-square bg-slate-950 rounded-lg overflow-hidden relative">
-                            <img src={getAssetUrl(imgUrl)} alt={`Tutorial ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
+                          <div className="aspect-square bg-amber-50 rounded-xl overflow-hidden">
+                            <img src={getAssetUrl(imgUrl)} alt={`Tutorial ${idx+1}`} className="w-full h-full object-cover" />
                           </div>
                         </div>
                       ))}
@@ -992,21 +836,18 @@ function App() {
 
               {/* VIEW 3: RATE CARD LIST */}
               {p2SubView === "rates" && (
-                <div className="flex flex-col gap-6">
-                  <h3 className="text-xs font-bold text-yellow-300 uppercase tracking-widest mb-1">กรอบเรทราคาของกลุ่ม/ฟ้อนต์จริง (Real Rate Cards)</h3>
+                <div className="flex flex-col gap-3">
+                  <h3 className="text-sm font-bold text-[#422f25] flex items-center gap-1">💰 กรอบเรทราคาของกลุ่ม/ฟ้อนต์</h3>
                   
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+                  <div className="grid grid-cols-2 gap-3">
                     {RATE_CARDS.map((imgUrl, idx) => (
                       <div 
                         key={idx}
                         onClick={() => setLightboxImage(imgUrl)}
-                        className="glass-panel p-1 rounded-2xl cursor-pointer overflow-hidden shadow group hover:border-purple-400/80 transition-all border-purple-500/20"
+                        className="rounded-2xl cursor-pointer overflow-hidden shadow-sm border border-pink-100 active:scale-95 transition-all"
                       >
-                        <div className="aspect-[3/4] rounded-xl bg-slate-950 overflow-hidden relative">
-                          <img src={getAssetUrl(imgUrl)} alt={`Rate Card ${idx+1}`} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" />
-                          <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
-                            <span className="text-[11px] font-semibold text-white bg-slate-950/80 px-2.5 py-1 rounded-lg border border-purple-500/30">ดูเรทราคาชัดๆ</span>
-                          </div>
+                        <div className="aspect-[3/4] bg-pink-50 overflow-hidden">
+                          <img src={getAssetUrl(imgUrl)} alt={`Rate Card ${idx+1}`} className="w-full h-full object-cover" />
                         </div>
                       </div>
                     ))}
@@ -1019,63 +860,66 @@ function App() {
 
           {/* --- PAGE 3: FONTS LIST NETWORK & TESTER --- */}
           {activeTab === 3 && (
-            <div className="flex flex-col gap-6 text-left animate-fadeIn">
+            <div className="flex flex-col gap-4 text-left">
               
-              {/* Header Title with search and price sorter */}
-              <div className="glass-panel p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
+              {/* Header with search */}
+              <div className="glass-panel p-4 rounded-2xl flex flex-col gap-3 shadow-sm">
                 <div>
-                  <h2 className="text-lg font-bold text-neutral-800 m-0 flex items-center gap-2">
-                    <Type className="w-4 h-4 text-purple-400" /> เครือฟอนต์ By Wish
+                  <h2 className="text-base font-bold text-[#422f25] m-0 flex items-center gap-2">
+                    <Type className="w-4 h-4 text-pink-400" /> เครือฟอนต์ By Wish
                   </h2>
-                  <p className="text-[11px] text-gray-400">กล่องพิมพ์ทดลองลายฟอนต์ลิขสิทธิ์และการจัดเรียงราคา</p>
+                  <p className="text-xs text-[#735c50] mt-0.5">ทดลองฟอนต์ลิขสิทธิ์และเลือกซื้อ</p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                  <div className="relative flex-1 md:flex-initial">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
                     <input 
                       type="text" 
                       placeholder="ค้นหาชื่อฟอนต์..."
                       value={p3Search}
                       onChange={(e) => setP3Search(e.target.value)}
-                      className="glass-input text-xs rounded-lg pl-8 pr-4 py-1.5 w-full md:w-44 text-neutral-700"
+                      className="glass-input text-xs rounded-xl pl-8 pr-3 py-2.5 w-full"
                     />
-                    <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-purple-450" />
+                    <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-pink-400" />
                   </div>
 
-                  <div className="flex items-center gap-1 bg-slate-900 border border-purple-500/30 px-2.5 py-1.5 rounded-lg text-xs text-purple-300 font-medium cursor-pointer">
-                    <ArrowUpDown className="w-3 h-3 text-purple-450" />
+                  <div className="flex items-center gap-1 bg-white border border-pink-200 px-2.5 py-2 rounded-xl text-xs text-[#735c50] font-medium cursor-pointer flex-shrink-0">
+                    <ArrowUpDown className="w-3 h-3 text-pink-400" />
                     <select 
                       value={p3Sort} 
                       onChange={(e) => setP3Sort(e.target.value)}
-                      className="bg-transparent border-none outline-none font-sans font-semibold cursor-pointer text-xs text-purple-300"
+                      className="bg-transparent border-none outline-none font-sans font-semibold cursor-pointer text-xs text-[#735c50]"
                     >
-                      <option value="default">เรียงลำดับราคา</option>
-                      <option value="low-to-high">ราคาต่ำ ไป สูง</option>
-                      <option value="high-to-low">ราคาสูง ไป ต่ำ</option>
+                      <option value="default">เรียง</option>
+                      <option value="low-to-high">ราคา ↑</option>
+                      <option value="high-to-low">ราคา ↓</option>
                     </select>
                   </div>
                 </div>
               </div>
 
-              {/* Categories Tabs */}
-              <div className="flex flex-wrap gap-1.5 overflow-x-auto pb-1">
-                {["ทั้งหมด", "ขายดี", "ฟอนต์หน้าปกtiktok", "ฟอนต์น่ารัก", "ฟอนต์มินิมอล"].map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setP3Category(cat)}
-                    className={`px-3.5 py-1.5 rounded-lg font-bold text-[11px] transition-all whitespace-nowrap cursor-pointer ${
-                      p3Category === cat 
-                        ? 'bg-purple-600 text-white shadow-sm' 
-                        : 'bg-slate-900/60 border border-purple-500/30 text-purple-300 hover:bg-slate-900/90'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
+              {/* Category filter chips - horizontal scroll */}
+              <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                {["ทั้งหมด", "ขายดี", "TikTok", "น่ารัก", "มินิมอล"].map((cat, idx) => {
+                  const categories = ["ทั้งหมด", "ขายดี", "ฟอนต์หน้าปกtiktok", "ฟอนต์น่ารัก", "ฟอนต์มินิมอล"];
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => setP3Category(categories[idx])}
+                      className={`px-4 py-2 rounded-full font-bold text-xs transition-all whitespace-nowrap cursor-pointer flex-shrink-0 ${
+                        p3Category === categories[idx] 
+                          ? 'bg-[#ff8fae] text-white shadow-sm' 
+                          : 'bg-white border border-pink-200 text-[#735c50]'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* DYNAMIC PASTEL LIVE TESTER BOX */}
-              <div className="glass-panel p-5 rounded-2xl border border-pink-500/20 shadow-sm flex flex-col gap-3 bg-gradient-to-r from-pink-500/5 to-purple-500/5">
+              <div className="glass-panel p-5 rounded-2xl border border-pink-500/20 shadow-sm flex flex-col gap-3 bg-pink-50/30">
                 <div className="flex items-center justify-between flex-wrap gap-2 border-b border-purple-500/30 pb-2.5">
                   <h3 className="font-bold text-yellow-300 text-xs m-0 flex items-center gap-1">
                     <span>✨</span>
@@ -1188,121 +1032,115 @@ function App() {
 
           {/* --- PAGE 4: RENTAL SERVICES & CALCULATOR --- */}
           {activeTab === 4 && (
-            <div className="flex flex-col gap-6 text-left animate-fadeIn">
+            <div className="flex flex-col gap-4 text-left">
               
-              <div className="glass-panel p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
-                <div>
-                  <h2 className="text-lg font-bold text-neutral-800 m-0 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-purple-400" /> สิทธิ์ปล่อยเช่าใช้งาน
-                  </h2>
-                  <p className="text-[11px] text-purple-300">สิทธิ์ปล่อยเช่าใช้งานรายวันรายสัปดาห์สำหรับความต้องการชั่วคราว</p>
-                </div>
+              <div className="glass-panel p-4 rounded-2xl shadow-sm">
+                <h2 className="text-base font-bold text-[#422f25] m-0 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-pink-400" /> สิทธิ์ปล่อยเช่าถาวร
+                </h2>
+                <p className="text-xs text-[#735c50] mt-0.5">เลือกซื้อสิทธิ์การใช้งานประเภทถาวรตลอดชีพ</p>
               </div>
 
-              {/* Minimalist Pricing Calculator Panel */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Mobile-first: stacked layout */}
+              <div className="flex flex-col gap-4">
                 
                 {/* Selector List */}
-                <div className="lg:col-span-2 flex flex-col gap-3">
-                  <h3 className="text-xs font-bold text-yellow-300 m-0 tracking-tight uppercase">เลือกสิทธิ์ปล่อยเช่าที่ต้องการคำนวณ</h3>
+                <div className="flex flex-col gap-3">
+                  <h3 className="text-xs font-bold text-[#422f25] uppercase tracking-tight">เลือกสิทธิ์ที่ต้องการ</h3>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-3">
                     {MOCK_RENTALS.map((rental) => (
                       <div 
                         key={rental.id}
                         onClick={() => setSelectedRental(rental)}
-                        className={`glass-panel p-4.5 rounded-xl border transition-all cursor-pointer text-left flex flex-col justify-between gap-3 border-purple-500/20 ${
+                        className={`glass-panel p-4.5 rounded-xl border transition-all cursor-pointer text-left flex flex-col justify-between gap-3 ${
                           selectedRental?.id === rental.id 
-                            ? 'border-purple-400 bg-slate-900 shadow-sm ring-1 ring-purple-500' 
-                            : 'hover:bg-slate-900/50'
+                            ? 'border-pink-400 bg-pink-50/60 shadow-md ring-1 ring-pink-400' 
+                            : 'bg-white hover:bg-pink-50/20 border-pink-200'
                         }`}
                       >
                         <div>
                           <div className="flex justify-between items-center gap-2">
-                            <span className="text-[8px] font-bold tracking-wider uppercase bg-purple-900/60 text-purple-200 px-2 py-0.5 rounded border border-purple-500/30">
+                            <span className="text-[9px] font-bold tracking-wider bg-[#9c6bb3] text-white px-2 py-0.5 rounded">
                               {rental.category}
                             </span>
-                            <span className="text-[10px] font-semibold text-pink-300 bg-pink-900/60 px-2 py-0.5 rounded border border-pink-500/30">
+                            <span className="text-[9px] font-semibold bg-[#b86d9a] text-white px-2 py-0.5 rounded">
                               {rental.rateDesc}
                             </span>
                           </div>
                           
-                          <h4 className="font-bold text-white text-xs mt-2 mb-1.5 leading-snug">
+                          <h4 className="font-bold text-[#422f25] text-xs mt-2 mb-1.5 leading-snug">
                             {rental.name}
                           </h4>
                           
-                          <p className="text-[10px] text-purple-300 leading-relaxed line-clamp-2">
+                          <p className="text-[10px] text-[#735c50] leading-relaxed line-clamp-2">
                             {rental.desc}
                           </p>
                         </div>
 
-                        <div className="flex items-center justify-between border-t border-purple-950 pt-2 text-[10px]">
-                          <span className="text-purple-400">เริ่มต้น</span>
-                          <span className="font-bold text-yellow-300">{rental.basePrice} เครดิต</span>
+                        <div className="flex items-center justify-between border-t border-pink-100 pt-2 text-[10px] text-[#735c50]">
+                          <span>ระยะเวลาสิทธิ์:</span>
+                          <span className="font-bold text-pink-500">ถาวรตลอดชีพ</span>
+                        </div>
+
+                        <div className="flex items-center justify-between border-t border-pink-100 pt-2 text-[10px] text-[#735c50]">
+                          <span>ราคาสิทธิ์ถาวร:</span>
+                          <span className="font-extrabold text-amber-500 text-xs">{rental.price} เครดิต</span>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
+
                 {/* Calculator Panel Box */}
                 {selectedRental && (
-                  <div className="glass-panel p-5 rounded-2xl border border-pink-500/25 bg-slate-950/70 shadow-sm flex flex-col justify-between gap-5">
+                  <div className="glass-panel p-5 rounded-2xl border border-pink-300/40 bg-white/95 shadow-md flex flex-col justify-between gap-4">
                     <div>
-                      <div className="flex items-center gap-2 border-b border-purple-500/30 pb-2.5 mb-3">
-                        <Info className="w-4 h-4 text-purple-450" />
-                        <h3 className="font-bold text-yellow-300 text-xs m-0">
-                          คำนวณวันปล่อยเช่า
+                      <div className="flex items-center gap-2 border-b border-pink-100 pb-2.5 mb-3">
+                        <Info className="w-4 h-4 text-pink-400" />
+                        <h3 className="font-bold text-[#422f25] text-xs m-0">
+                          สรุปรายการรับสิทธิ์ถาวร
                         </h3>
                       </div>
 
-                      <div className="flex flex-col gap-3.5 text-xs text-left">
+                      <div className="flex flex-col gap-3 text-xs text-left">
                         <div>
-                          <p className="text-purple-400 font-semibold mb-0.5">สิทธิ์เช่า:</p>
-                          <p className="font-bold text-white">{selectedRental.name}</p>
+                          <p className="text-[#735c50] font-semibold mb-0.5">สิทธิ์ถาวรที่เลือก:</p>
+                          <p className="font-bold text-[#422f25]">{selectedRental.name}</p>
                         </div>
 
                         <div>
-                          <p className="text-purple-400 font-semibold mb-0.5">เกณฑ์อ้างอิง:</p>
-                          <p className="font-bold text-purple-300">{selectedRental.duration} วัน / {selectedRental.basePrice} เครดิต</p>
+                          <p className="text-[#735c50] font-semibold mb-0.5">ประเภทสิทธิ์:</p>
+                          <p className="font-bold text-pink-500 flex items-center gap-1">
+                            <span>🌟</span> สิทธิ์ปล่อยเช่าถาวรตลอดชีพ (Lifetime Lease)
+                          </p>
                         </div>
 
-                        {/* Interactive Duration Slider */}
-                        <div className="flex flex-col gap-1.5 mt-1">
-                          <div className="flex justify-between items-center font-semibold text-purple-300 text-[11px]">
-                            <span>ระบุวันเช่าจริง:</span>
-                            <span className="text-pink-400 font-bold">{rentalDays} วัน</span>
-                          </div>
-                          
-                          <input 
-                            type="range" 
-                            min="3" 
-                            max="90" 
-                            value={rentalDays}
-                            onChange={(e) => setRentalDays(Number(e.target.value))}
-                            className="accent-pink-500 h-1 bg-gray-700 rounded-lg cursor-pointer"
-                          />
+                        <div className="bg-pink-50/50 rounded-xl p-3 border border-pink-100 flex flex-col gap-1">
+                          <p className="text-[10px] text-[#735c50] leading-relaxed m-0">
+                            เป็นการซื้อขาดสิทธิ์ถาวร ไม่มีวันหมดอายุ ไม่ต้องต่ออายุรายวันหรือรายปี สามารถใช้งานและเข้าถึงทรัพยากรที่กำหนดได้ตลอดชีพ
+                          </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="border-t border-purple-500/30 pt-3 flex flex-col gap-3">
+                    <div className="border-t border-pink-100 pt-3 flex flex-col gap-3">
                       <div className="flex justify-between items-center text-xs">
-                        <span className="text-purple-300 font-semibold">ยอดค่าใช้จ่ายเช่า:</span>
-                        <span className="text-lg font-extrabold text-yellow-300">
-                          {Math.ceil((selectedRental.basePrice / selectedRental.duration) * rentalDays)} เครดิต
+                        <span className="text-[#735c50] font-semibold">ราคาสิทธิ์ถาวรสุทธิ:</span>
+                        <span className="text-lg font-extrabold text-amber-500">
+                          {selectedRental.price} เครดิต
                         </span>
                       </div>
 
                       <button 
                         onClick={() => {
-                          const finalPrice = Math.ceil((selectedRental.basePrice / selectedRental.duration) * rentalDays);
-                          simulateBuyProduct(`เช่าสิทธิ์ ${selectedRental.name} (${rentalDays} วัน)`, finalPrice);
+                          simulateBuyProduct(`ซื้อสิทธิ์ถาวร ${selectedRental.name}`, selectedRental.price);
                         }}
-                        className="w-full bg-gradient-to-r from-purple-500 via-purple-600 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2 rounded-lg text-xs cursor-pointer shadow transition-all flex items-center justify-center gap-1.5"
+                        className="w-full bg-gradient-to-r from-pink-400 to-amber-400 hover:from-pink-500 hover:to-amber-500 text-white font-bold py-2.5 rounded-xl text-xs cursor-pointer shadow-sm transition-all flex items-center justify-center gap-1.5"
                       >
                         <ShoppingBag className="w-3.5 h-3.5" />
-                        <span>ชำระเช่าและรับสิทธิ์</span>
+                        <span>ชำระเงินและรับสิทธิ์ถาวร</span>
                       </button>
                     </div>
                   </div>
@@ -1315,42 +1153,44 @@ function App() {
 
           {/* --- PAGE 5: PARTNER BRANDS REPRESENTATIVES --- */}
           {activeTab === 5 && (
-            <div className="flex flex-col gap-6 text-left animate-fadeIn">
+            <div className="flex flex-col gap-4 text-left">
               
-              <div className="glass-panel p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
-                <div>
-                  <h2 className="text-lg font-bold text-neutral-800 m-0 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-purple-400" /> รวมเครือฟอนต์ตัวแทนขายบ้านอื่นๆ
-                  </h2>
-                  <p className="text-[11px] text-purple-300">ตัวแทนจำหน่ายฟอนต์ลิขสิทธิ์ถูกต้องของบ้านพันธมิตร</p>
-                </div>
+              <div className="glass-panel p-4 rounded-2xl shadow-sm">
+                <h2 className="text-base font-bold text-[#422f25] m-0 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-pink-400" /> ฟอนต์จากบ้านพันธมิตร
+                </h2>
+                <p className="text-xs text-[#735c50] mt-0.5">ตัวแทนจำหน่ายฟอนต์ลิขสิทธิ์ถูกต้องของบ้านพันธมิตร</p>
               </div>
 
-              {/* Group Brands tabs and lists */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {/* Partner cards - single column stack */}
+              <div className="flex flex-col gap-4">
                 {Object.keys(MOCK_PARTNER_HOUSES).map((houseName) => {
-                  const borderClass = houseName.includes("ส้ม") ? "border-t-orange-400" : houseName.includes("ฟ้า") ? "border-t-blue-400" : "border-t-pink-400";
-                  const buttonBg = houseName.includes("ส้ม") ? "from-orange-500 to-amber-600" : houseName.includes("ฟ้า") ? "from-blue-500 to-sky-600" : "from-pink-500 to-rose-600";
+                  const isOrange = houseName.includes("ส้ม");
+                  const isBlue = houseName.includes("ฟ้า");
+                  
+                  const borderClass = isOrange ? "border-t-orange-400" : isBlue ? "border-t-sky-400" : "border-t-pink-400";
+                  const buttonBg = isOrange ? "bg-orange-400 hover:bg-orange-500" : isBlue ? "bg-sky-400 hover:bg-sky-500" : "bg-pink-400 hover:bg-pink-500";
+                  const itemBg = isOrange ? "bg-orange-50/50 border border-orange-100" : isBlue ? "bg-sky-50/50 border border-sky-100" : "bg-pink-50/50 border border-pink-100";
                   
                   return (
                     <div 
                       key={houseName}
-                      className={`glass-panel p-4.5 rounded-2xl border flex flex-col justify-between gap-4 text-left shadow-sm border-t-4 border-purple-500/20 ${borderClass}`}
+                      className={`glass-panel bg-white/95 p-4.5 rounded-2xl border flex flex-col justify-between gap-4 text-left shadow-sm border-t-4 ${borderClass}`}
                     >
                       <div>
-                        <h3 className="font-bold text-white text-xs m-0 mb-2.5 flex items-center justify-between">
+                        <h3 className="font-bold text-[#422f25] text-xs m-0 mb-2.5 flex items-center justify-between">
                           <span>{houseName}</span>
-                          <span className="text-[9px] font-bold text-purple-450 uppercase">Partner</span>
+                          <span className="text-[9px] font-bold text-pink-500 uppercase">Partner House</span>
                         </h3>
                         
                         <div className="flex flex-col gap-2">
                           {MOCK_PARTNER_HOUSES[houseName].map((item) => (
-                            <div key={item.id} className="bg-slate-900/60 border border-purple-900/50 rounded-lg p-2.5 flex flex-col gap-0.5">
+                            <div key={item.id} className={`${itemBg} rounded-lg p-2.5 flex flex-col gap-0.5`}>
                               <div className="flex justify-between items-center text-[11px]">
-                                <span className="font-semibold text-white">{item.name}</span>
-                                <span className="font-bold text-yellow-300">{item.price} เครดิต</span>
+                                <span className="font-semibold text-[#422f25]">{item.name}</span>
+                                <span className="font-bold text-amber-500">{item.price} เครดิต</span>
                               </div>
-                              <p className="text-[9px] text-purple-300 leading-normal">{item.desc}</p>
+                              <p className="text-[9px] text-[#735c50] leading-normal">{item.desc}</p>
                             </div>
                           ))}
                         </div>
@@ -1361,7 +1201,7 @@ function App() {
                           showNotification(`นำคุณมายังช่องทางการติดต่อสั่งซื้อฟอนต์จาก ${houseName}`, "success");
                           setActiveTab(7);
                         }}
-                        className={`w-full bg-gradient-to-r ${buttonBg} text-white font-bold py-1.5 rounded-lg text-xs cursor-pointer shadow transition-all flex items-center justify-center gap-0.5`}
+                        className={`w-full ${buttonBg} text-white font-bold py-2 rounded-xl text-xs cursor-pointer shadow-sm transition-all flex items-center justify-center gap-0.5 border-none`}
                       >
                         <span>สั่งซื้อฟอนต์บ้านนี้</span>
                         <ChevronRight className="w-3 h-3" />
@@ -1374,17 +1214,15 @@ function App() {
             </div>
           )}
 
-          {/* --- PAGE 6: HELP GUIDE LINE DROPPED --- */}
+          {/* --- PAGE 6: HELP GUIDE --- */}
           {activeTab === 6 && (
-            <div className="flex flex-col gap-6 text-left animate-fadeIn">
+            <div className="flex flex-col gap-4 text-left">
               
-              <div className="glass-panel p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
-                <div>
-                  <h2 className="text-lg font-bold text-neutral-800 m-0 flex items-center gap-2">
-                    <HelpCircle className="w-4 h-4 text-purple-400" /> การแก้ไขกรณีบัญชีไลน์หลุดจากกลุ่ม
-                  </h2>
-                  <p className="text-[11px] text-purple-300">คำแนะนำขั้นตอนแก้ปัญหาการหลุดกลุ่มและวิธีแจ้งเรื่องความช่วยเหลือ</p>
-                </div>
+              <div className="glass-panel p-4 rounded-2xl shadow-sm">
+                <h2 className="text-base font-bold text-[#422f25] m-0 flex items-center gap-2">
+                  <HelpCircle className="w-4 h-4 text-pink-400" /> แก้ไขกรณีไลน์หลุดกลุ่ม
+                </h2>
+                <p className="text-xs text-[#735c50] mt-0.5">ขั้นตอนแก้ปัญหาและวิธีแจ้งเรื่องความช่วยเหลือ</p>
               </div>
 
               {/* Instructions steps card */}
@@ -1443,24 +1281,49 @@ function App() {
             </div>
           )}
 
-          {/* --- PAGE 7: CONTACT & POLICIES (REAL IMAGE EMBEDS) --- */}
+          {/* --- PAGE 7: CONTACT & POLICIES --- */}
           {activeTab === 7 && (
-            <div className="flex flex-col gap-6 text-left animate-fadeIn">
+            <div className="flex flex-col gap-4 text-left">
               
-              <div className="glass-panel p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
-                <div>
-                  <h2 className="text-lg font-bold text-neutral-800 m-0 flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-purple-400" /> ช่องทางติดต่อ & กฎระเบียบ
-                  </h2>
-                  <p className="text-[11px] text-purple-300">ช่องทางการติดต่อและภาพบอร์ดคอนแทคจริงของทางร้าน</p>
-                </div>
+              <div className="glass-panel p-4 rounded-2xl shadow-sm">
+                <h2 className="text-base font-bold text-[#422f25] m-0 flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-pink-400" /> ช่องทางติดต่อ
+                </h2>
+                <p className="text-xs text-[#735c50] mt-0.5">ช่องทางติดต่อและข้อมูลสำคัญของทางร้าน</p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                {/* Contact and Rules (Left side) */}
-                <div className="lg:col-span-2 flex flex-col gap-5">
+              {/* All content stacked vertically for mobile */}
+              <div className="flex flex-col gap-4">
                   
+                  {/* Quick Access to Other Pages */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <button 
+                      onClick={() => setActiveTab(5)}
+                      className="glass-panel p-3.5 rounded-xl border border-purple-500/20 hover:border-purple-400 bg-slate-950/40 text-left flex items-center gap-3 transition-all cursor-pointer group"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white flex-shrink-0 group-hover:scale-105 transition-all">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white text-xs m-0">ฟอนต์บ้านอื่นๆ</h4>
+                        <p className="text-[9px] text-purple-300 m-0">รวมผลงานบ้านพันธมิตร</p>
+                      </div>
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveTab(6)}
+                      className="glass-panel p-3.5 rounded-xl border border-purple-500/20 hover:border-purple-400 bg-slate-950/40 text-left flex items-center gap-3 transition-all cursor-pointer group"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-red-500 to-pink-600 flex items-center justify-center text-white flex-shrink-0 group-hover:scale-105 transition-all">
+                        <HelpCircle className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white text-xs m-0">แก้ไขไลน์หลุดกลุ่ม</h4>
+                        <p className="text-[9px] text-purple-300 m-0">ขั้นตอนดึงกลับเข้ากลุ่ม</p>
+                      </div>
+                    </button>
+                  </div>
+
                   {/* WARNING RULES BOARD */}
                   <div className="glass-panel p-5 rounded-2xl border border-rose-500/30 bg-rose-950/20 text-left flex gap-3.5 shadow-sm">
                     <div className="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center flex-shrink-0 shadow">
@@ -1482,8 +1345,8 @@ function App() {
 
                   {/* EMBED OF REAL CONTACT CARD GRAPHICS FROM USER */}
                   <div className="flex flex-col gap-3">
-                    <h3 className="text-xs font-bold text-yellow-300 uppercase tracking-widest">การ์ดช่องทางการติดต่อหลัก (Official Banner Cards)</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <h3 className="text-xs font-bold text-[#422f25]">📋 การ์ดช่องทางติดต่อหลัก</h3>
+                    <div className="grid grid-cols-2 gap-3">
                       <div 
                         onClick={() => setLightboxImage("/page2/กรอบคอนแทค/615530562799010103.jpg")}
                         className="glass-panel p-1 rounded-xl overflow-hidden border border-purple-500/20 hover:border-purple-400 shadow-sm cursor-zoom-in group"
@@ -1513,7 +1376,7 @@ function App() {
                   </div>
 
                   {/* Social Channel Links Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-3 gap-3">
                     
                     <a 
                       href="https://facebook.com" 
@@ -1559,12 +1422,10 @@ function App() {
 
                   </div>
 
-                </div>
-
-                {/* Simulated Quick Send Message Form */}
-                <div className="glass-panel p-5 rounded-2xl border border-purple-500/25 bg-slate-950/70 shadow-sm flex flex-col gap-3.5">
-                  <h3 className="font-bold text-yellow-300 text-xs m-0 flex items-center gap-1.5 border-b border-purple-100/30 pb-2.5">
-                    <span>ฝากข้อความถึงทีมงาน</span>
+                  {/* Contact form card */}
+                <div className="glass-panel p-4 rounded-2xl border border-pink-100 shadow-sm flex flex-col gap-3">
+                  <h3 className="font-bold text-[#422f25] text-sm m-0 flex items-center gap-1.5 border-b border-pink-100 pb-2.5">
+                    💌 ฝากข้อความถึงทีมงาน
                   </h3>
 
                   <form onSubmit={handleContactSubmit} className="flex flex-col gap-3 text-left">
@@ -1619,16 +1480,65 @@ function App() {
             </div>
           )}
 
+          {/* --- FOOTER CONTENT --- */}
+          <footer className="glass-panel mt-12 py-6 px-4 border-t border-purple-500/20 text-center text-xs text-purple-300">
+            <p className="m-0 font-medium">© 2026 By Wish Network. All Rights Reserved.</p>
+            <p className="text-[9px] text-purple-400 mt-1 font-semibold uppercase tracking-wider">
+              Premium Magic Amusement Park Aesthetic Platform
+            </p>
+          </footer>
+
         </main>
+
+        {/* Bottom Navigation Tab Bar */}
+        <div className="bottom-tab-bar-container">
+          <nav className="bottom-tab-bar">
+            <button 
+              onClick={() => setActiveTab(1)}
+              className={`bottom-tab-item ${activeTab === 1 ? 'active' : ''}`}
+            >
+              <Home className="w-5 h-5" />
+              <span>หน้าแรก</span>
+            </button>
+
+            <button 
+              onClick={() => setActiveTab(2)}
+              className={`bottom-tab-item ${activeTab === 2 ? 'active' : ''}`}
+            >
+              <Users className="w-5 h-5" />
+              <span>เครือกลุ่ม</span>
+            </button>
+
+            <button 
+              onClick={() => setActiveTab(3)}
+              className={`bottom-tab-item ${activeTab === 3 ? 'active' : ''}`}
+            >
+              <Type className="w-5 h-5" />
+              <span>เครือฟอนต์</span>
+            </button>
+
+            <button 
+              onClick={() => setActiveTab(4)}
+              className={`bottom-tab-item ${activeTab === 4 ? 'active' : ''}`}
+            >
+              <Calendar className="w-5 h-5" />
+              <span>ปล่อยเช่า</span>
+            </button>
+
+            <button 
+              onClick={() => setActiveTab(7)}
+              className={`bottom-tab-item ${[5, 6, 7].includes(activeTab) ? 'active' : ''}`}
+            >
+              <Phone className="w-5 h-5" />
+              <span>ติดต่อ/อื่นๆ</span>
+            </button>
+          </nav>
+        </div>
+
       </div>
 
-      {/* --- FOOTER CONTENT --- */}
-      <footer className="glass-panel mt-12 py-6 px-4 border-t border-purple-500/20 text-center text-xs text-purple-300">
-        <p className="m-0 font-medium">© 2026 By Wish Network. All Rights Reserved.</p>
-        <p className="text-[9px] text-purple-400 mt-1 font-semibold uppercase tracking-wider">
-          Premium Magic Amusement Park Aesthetic Platform
-        </p>
-      </footer>
+      {/* Close the phone mockup viewport */}
+      </div>
 
       {/* ======================================================== */}
       {/* ============ MODAL DIALOGS (AUTH & CREDIT) ============= */}

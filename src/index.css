@@ -10,14 +10,14 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: #faf9fc;
+  background-color: #fffbfd;
   min-height: 100vh;
-  color: #2d2438;
+  color: #4a3525;
   overflow-x: hidden;
   position: relative;
 }
 
-/* Starry Sky Sparkle overlay using pure CSS in a bright pastel theme */
+/* Starry Sky Sparkle overlay using pure CSS in a cute pastel Hana Bloom theme */
 body::before {
   content: '';
   position: fixed;
@@ -26,10 +26,10 @@ body::before {
   width: 100%;
   height: 100%;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(167, 139, 250, 0.12) 1.5px, transparent 1.5px),
-    radial-gradient(circle at 80% 40%, rgba(244, 114, 182, 0.18) 2px, transparent 2px),
-    radial-gradient(circle at 30% 70%, rgba(167, 139, 250, 0.1) 1.2px, transparent 1.2px),
-    radial-gradient(circle at 70% 80%, rgba(244, 114, 182, 0.15) 1.8px, transparent 1.8px);
+    radial-gradient(circle at 10% 20%, rgba(255, 143, 174, 0.25) 2.5px, transparent 2.5px),
+    radial-gradient(circle at 80% 40%, rgba(153, 226, 255, 0.3) 3px, transparent 3px),
+    radial-gradient(circle at 30% 70%, rgba(255, 226, 150, 0.28) 2px, transparent 2px),
+    radial-gradient(circle at 70% 80%, rgba(255, 143, 174, 0.22) 2.8px, transparent 2.8px);
   background-size: 250px 250px;
   animation: starsMoving 180s linear infinite;
   pointer-events: none;
@@ -45,15 +45,15 @@ body::before {
   }
 }
 
-/* Magical Bright Glassmorphism Panel with Violet-Glow Border */
+/* Magical Cute Glassmorphism Panel with Soft Pink Bezel */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(167, 139, 250, 0.3);
+  border: 1px solid rgba(255, 143, 174, 0.28);
   box-shadow: 
-    0 8px 32px 0 rgba(167, 139, 250, 0.05),
-    0 0 15px rgba(244, 114, 182, 0.02);
+    0 8px 32px 0 rgba(255, 143, 174, 0.04),
+    0 0 15px rgba(153, 226, 255, 0.03);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -63,55 +63,53 @@ body::before {
 
 .glass-panel-hover:hover {
   transform: translateY(-4px);
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.96);
   box-shadow: 
-    0 15px 40px 0 rgba(167, 139, 250, 0.1),
-    0 0 25px rgba(244, 114, 182, 0.06);
-  border-color: rgba(167, 139, 250, 0.55);
+    0 15px 40px 0 rgba(255, 143, 174, 0.1),
+    0 0 25px rgba(153, 226, 255, 0.06);
+  border-color: rgba(255, 143, 174, 0.48);
 }
 
 .glass-input {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(167, 139, 250, 0.3);
-  color: #2d2438;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(255, 143, 174, 0.35);
+  color: #4a3525;
   outline: none;
   transition: all 0.3s ease;
 }
 
 .glass-input:focus {
   background: #ffffff;
-  border-color: #a78bfa;
-  box-shadow: 0 0 12px rgba(167, 139, 250, 0.2);
+  border-color: #ff8fae;
+  box-shadow: 0 0 12px rgba(255, 143, 174, 0.22);
 }
 
-/* Custom Scrollbars in Bright Magic Theme */
+/* Custom Scrollbars in Cute Hana Bloom Theme */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.7);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #d8b4fe, #f472b6);
+  background: #ffd6e8;
   border-radius: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.7);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #f472b6, #a78bfa);
+  background: #ff8fae;
 }
 
-/* Shiny gradient text */
+/* Shiny gradient text replaced with solid cute pink */
 .shiny-text {
-  background: linear-gradient(135deg, #b45309, #db2777, #7c3aed, #0284c7);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shine 5s linear infinite;
+  color: #ff8fae !important;
+  background: none !important;
+  -webkit-text-fill-color: #ff8fae !important;
 }
 
 @keyframes shine {
@@ -139,15 +137,15 @@ body::before {
 
 /* Glow highlights for magic items */
 .magic-glow-purple {
-  box-shadow: 0 0 20px rgba(167, 139, 250, 0.12);
+  box-shadow: 0 0 20px rgba(153, 226, 255, 0.16);
 }
 
 .magic-glow-pink {
-  box-shadow: 0 0 20px rgba(244, 114, 182, 0.12);
+  box-shadow: 0 0 20px rgba(255, 143, 174, 0.18);
 }
 
 .magic-glow-gold {
-  box-shadow: 0 0 20px rgba(217, 119, 6, 0.1);
+  box-shadow: 0 0 20px rgba(255, 226, 150, 0.12);
 }
 
 /* Custom font previews */
@@ -168,10 +166,10 @@ body::before {
 }
 
 /* ======================================================== */
-/* ============= BRIGHT LIGHT THEME OVERRIDES ============ */
+/* ============= CUTE PASTEL THEME OVERRIDES ============ */
 /* ======================================================== */
 
-/* Convert Slate and Dark elements to bright pastel purple-whites */
+/* Convert dark containers into clean, crisp white cards with soft shadows */
 .bg-slate-900,
 .bg-slate-950,
 .bg-slate-900\/60,
@@ -180,53 +178,75 @@ body::before {
 .bg-slate-950\/80,
 .bg-purple-900\/80,
 .bg-purple-950\/60 {
-  background-color: rgba(246, 240, 253, 0.72) !important;
-  color: #2d2438 !important;
-  border-color: rgba(167, 139, 250, 0.22) !important;
+  background-color: #ffffff !important;
+  color: #4a3525 !important;
+  border: 1px solid rgba(255, 143, 174, 0.22) !important;
+  box-shadow: 
+    0 10px 25px -5px rgba(255, 143, 174, 0.05),
+    0 4px 10px -2px rgba(153, 226, 255, 0.03) !important;
+  border-radius: 20px !important;
 }
 
-/* Keep modal, slip container and lightbox backdrops dark for focus */
+/* Modal overlay & glass panel updates */
 div.fixed.bg-slate-950\/70 {
-  background-color: rgba(20, 15, 30, 0.45) !important;
-}
-div.fixed.bg-slate-950\/90 {
-  background-color: rgba(10, 5, 15, 0.88) !important;
-}
-.bg-slate-950 p.text-purple-300 {
-  color: #e9d5ff !important;
-}
-.bg-slate-950 span.text-purple-300 {
-  color: #e9d5ff !important;
+  background-color: rgba(255, 235, 240, 0.45) !important;
+  backdrop-filter: blur(8px) !important;
 }
 
-/* Light theme readable text overrides */
+div.fixed .glass-panel {
+  background: #ffffff !important;
+  border: 1px solid rgba(255, 143, 174, 0.3) !important;
+  box-shadow: 0 25px 50px -12px rgba(255, 143, 174, 0.15) !important;
+  border-radius: 24px !important;
+}
+
+div.fixed.bg-slate-950\/90 {
+  background-color: rgba(90, 70, 80, 0.85) !important;
+}
+
+/* Light theme typography overrides for optimal readability and contrast */
 .text-purple-100,
 .text-purple-200,
 .text-purple-300,
 .text-purple-400,
 .text-purple-250,
-.text-purple-350 {
-  color: #5c437a !important;
+.text-purple-350,
+p.text-purple-300,
+span.text-purple-300 {
+  color: #735c50 !important; /* Soft chocolate/mocha brown for cute readable text */
 }
 
 .text-purple-300\/80 {
-  color: rgba(92, 67, 122, 0.8) !important;
+  color: rgba(115, 92, 80, 0.8) !important;
 }
 
 .text-slate-350,
 .text-slate-300,
 .text-slate-400 {
-  color: #4b3962 !important;
+  color: #634d40 !important;
 }
 
-/* Readable gold/amber text for titles & ratings */
+/* Headings inside white cards need to be deep dark cocoa brown */
+.bg-slate-900 h1, .bg-slate-900 h2, .bg-slate-900 h3, .bg-slate-900 h4,
+.bg-slate-950 h1, .bg-slate-950 h2, .bg-slate-950 h3, .bg-slate-950 h4,
+.bg-slate-900\/60 h1, .bg-slate-900\/60 h2, .bg-slate-900\/60 h3, .bg-slate-900\/60 h4,
+.bg-slate-950\/50 h1, .bg-slate-950\/50 h2, .bg-slate-950\/50 h3, .bg-slate-950\/50 h4,
+.bg-slate-950\/60 h1, .bg-slate-950\/60 h2, .bg-slate-950\/60 h3, .bg-slate-950\/60 h4,
+.bg-slate-950\/80 h1, .bg-slate-950\/80 h2, .bg-slate-950\/80 h3, .bg-slate-950\/80 h4,
+.bg-purple-900\/80 h1, .bg-purple-900\/80 h2, .bg-purple-900\/80 h3, .bg-purple-900\/80 h4,
+.bg-purple-950\/60 h1, .bg-purple-950\/60 h2, .bg-purple-950\/60 h3, .bg-purple-950\/60 h4 {
+  color: #422f25 !important;
+  font-weight: 800 !important;
+}
+
+/* Readable caramel/amber text for titles & ratings */
 .text-yellow-300,
 .text-yellow-450,
 .text-yellow-400 {
-  color: #b45309 !important; /* Amber 700 */
+  color: #db7314 !important; /* Caramel orange */
 }
 
-/* Redesign Gradient Headings to be deep & luxurious rose-violet instead of neon */
+/* Redesign Gradient Headings to be beautiful solid pastel pink */
 .bg-gradient-to-r.from-yellow-300.via-pink-400.to-purple-300,
 .bg-gradient-to-r.from-yellow-300.via-pink-400.to-purple-400,
 .bg-gradient-to-r.from-yellow-300.via-pink-400.to-purple-500,
@@ -234,12 +254,322 @@ div.fixed.bg-slate-950\/90 {
 .from-yellow-300.via-pink-400.to-purple-300,
 .from-yellow-300.via-pink-400.to-purple-400,
 .from-yellow-300.via-pink-400.to-purple-500 {
-  background-image: linear-gradient(135deg, #7c3aed, #db2777, #ec4899) !important;
-  -webkit-background-clip: text !important;
-  color: transparent !important;
+  background-image: none !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  color: #ff8fae !important;
 }
 
-/* Main title styling */
+/* Global title styling */
 h1.text-lg, h2.text-lg, h3.text-sm {
-  color: #2d2438 !important;
+  color: #422f25 !important;
+  font-weight: 800 !important;
+}
+
+/* Premium Buttons Styling in Cute Solid Strawberry Pink */
+button.bg-gradient-to-r {
+  background: #ff8fae !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 1px rgba(92, 64, 51, 0.15) !important;
+  border-radius: 16px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(255, 143, 174, 0.25) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+button.bg-gradient-to-r:hover {
+  background: #ff7ca2 !important;
+  transform: translateY(-2.5px) !important;
+  box-shadow: 0 8px 24px rgba(255, 143, 174, 0.45) !important;
+  opacity: 0.98 !important;
+}
+
+button.bg-gradient-to-r:active {
+  transform: translateY(0px) !important;
+}
+
+/* Polished Category Selector buttons */
+.flex.flex-wrap.gap-1\.5 button {
+  border-radius: 20px !important;
+  padding: 6px 14px !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  transition: all 0.25s ease !important;
+  cursor: pointer !important;
+  height: auto !important;
+}
+
+.flex.flex-wrap.gap-1\.5 button.bg-purple-600 {
+  background: #ff8fae !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 10px rgba(255, 143, 174, 0.2) !important;
+  border: none !important;
+}
+
+.flex.flex-wrap.gap-1\.5 button:not(.bg-purple-600) {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(255, 143, 174, 0.25) !important;
+  color: #7a6559 !important;
+}
+
+.flex.flex-wrap.gap-1\.5 button:not(.bg-purple-600):hover {
+  background: #ffffff !important;
+  border-color: rgba(255, 143, 174, 0.5) !important;
+  color: #ff8fae !important;
+}
+
+/* Modern Segment Controllers (tab switcher) */
+.flex.bg-slate-950\/80 {
+  background: rgba(255, 245, 247, 0.95) !important;
+  border: 1px solid rgba(255, 143, 174, 0.3) !important;
+  border-radius: 20px !important;
+  padding: 4px !important;
+}
+
+.flex.bg-slate-950\/80 button {
+  border-radius: 16px !important;
+  padding: 6px 14px !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  transition: all 0.25s ease !important;
+  cursor: pointer !important;
+  border: none !important;
+}
+
+.flex.bg-slate-950\/80 button.bg-purple-600 {
+  background: #ffffff !important;
+  color: #ff8fae !important;
+  box-shadow: 0 4px 10px rgba(255, 143, 174, 0.12) !important;
+  border: none !important;
+}
+
+.flex.bg-slate-950\/80 button:not(.bg-purple-600) {
+  background: transparent !important;
+  color: #857065 !important;
+}
+
+.flex.bg-slate-950\/80 button:not(.bg-purple-600):hover {
+  color: #ff8fae !important;
+}
+
+/* Sleek Input & Textarea fields */
+.glass-input, 
+select.glass-input, 
+input[type="text"].glass-input, 
+input[type="email"].glass-input, 
+input[type="password"].glass-input, 
+textarea.glass-input {
+  background: #ffffff !important;
+  border: 1px solid rgba(255, 143, 174, 0.35) !important;
+  color: #422f25 !important;
+  border-radius: 12px !important;
+  padding: 10px 14px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: inset 0 2px 4px rgba(255, 143, 174, 0.03) !important;
+}
+
+.glass-input:focus, 
+select.glass-input:focus, 
+input[type="text"].glass-input:focus, 
+textarea.glass-input:focus {
+  border-color: #ff8fae !important;
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 143, 174, 0.02),
+    0 0 0 4px rgba(255, 143, 174, 0.15) !important;
+  background: #ffffff !important;
+}
+
+/* User credit pill in header */
+.flex.items-center.bg-neutral-100\/90 {
+  background: rgba(255, 245, 247, 0.95) !important;
+  border: 1px solid rgba(255, 143, 174, 0.4) !important;
+  border-radius: 12px !important;
+  padding: 4px 8px !important;
+}
+
+.flex.items-center.bg-neutral-100\/90 span.font-black {
+  color: #ff8fae !important;
+  font-size: 12px !important;
+}
+
+header button.bg-gradient-to-r {
+  font-size: 11px !important;
+  padding: 6px 12px !important;
+  border-radius: 10px !important;
+}
+
+/* ======================================================== */
+/* ============= MOBILE APP DEVICE DECORATIONS ============ */
+/* ======================================================== */
+
+/* Centered Smartphone Screen for Desktop Views with matching Hana Bloom illustration style */
+.phone-mockup-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  min-height: 100vh;
+  background: #e8f4fd; /* Solid beautiful soft pastel sky blue matching the illustration theme */
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* The vertical mobile container on desktop styled like a premium smartphone bezel but without black border */
+.phone-mockup {
+  width: 100%;
+  max-width: 480px; /* Elegant mobile width on desktop */
+  height: 100vh; /* Fill vertical screen exactly to avoid any cut-off or overflow */
+  background: #f8fafc;
+  box-shadow: 
+    0 0 40px rgba(255, 143, 174, 0.12),
+    0 0 10px rgba(153, 226, 255, 0.08);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: none; /* No black border! */
+  border-radius: 0; /* Clean borderless look */
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* The screen inside the vertical container */
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  background-color: #f8fafc;
+  border-radius: 0; /* Clean borderless look */
+  overflow: hidden; /* Disables outer wrapper scrolling, only main viewport scrolls */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: none; /* Firefox */
+}
+
+.phone-screen::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+/* Hide notch */
+.phone-notch {
+  display: none;
+}
+
+/* Premium Floating Bottom Tab Bar exactly like high-end mobile nav */
+.bottom-tab-bar-container {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  z-index: 40;
+  pointer-events: none; /* Let container be click-through, buttons will enable pointer events */
+}
+
+.bottom-tab-bar {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 143, 174, 0.25);
+  border-radius: 30px; /* Pill-shaped outer border */
+  padding: 6px 8px;
+  box-shadow: 
+    0 12px 35px rgba(255, 143, 174, 0.15),
+    0 4px 12px rgba(153, 226, 255, 0.05);
+}
+
+/* Tab button styling */
+.bottom-tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 48px;
+  border-radius: 22px;
+  color: #a89489;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 10px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  gap: 2px;
+}
+
+/* Active tab state */
+.bottom-tab-item.active {
+  background: rgba(255, 143, 174, 0.15) !important;
+  color: #ff8fae !important; /* Pink active text */
+  box-shadow: inset 0 1px 2px rgba(255, 143, 174, 0.05) !important;
+}
+
+.bottom-tab-item.active svg {
+  color: #ff8fae !important; /* Pink active icon */
+  stroke: #ff8fae;
+  transform: translateY(-1px) scale(1.05);
+}
+
+/* Icon overrides */
+.bottom-tab-item svg {
+  width: 20px;
+  height: 20px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #a89489;
+}
+
+/* Micro-animations */
+.bottom-tab-item:active {
+  transform: scale(0.95);
+}
+
+/* Adjust general layouts for mobile viewport inside mockup */
+.app-viewport {
+  padding-bottom: 96px; /* give space so content isn't hidden by bottom bar */
+}
+
+/* Hide scrollbar utility */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Responsive Overrides: on small viewports, remove mockup framing */
+@media (max-width: 480px) {
+  .phone-mockup-wrapper {
+    padding: 0;
+    background: transparent;
+  }
+  .phone-mockup {
+    max-width: 100%;
+    height: 100vh;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  .phone-screen {
+    border-radius: 0;
+    height: 100vh;
+  }
+  .phone-notch {
+    display: none; /* Hide notch on real mobile devices to maximize display */
+  }
+  .bottom-tab-bar-container {
+    bottom: 16px;
+    width: 92%;
+  }
 }
